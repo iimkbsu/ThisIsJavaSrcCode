@@ -1,4 +1,4 @@
-package backJoon;
+package backJoon.BJ_3003;
 
 import java.io.IOException;
 import java.util.Scanner;
