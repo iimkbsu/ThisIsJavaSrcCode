@@ -10,6 +10,8 @@ public class Main {
     static HashMap<String, Integer> nationIndex = new HashMap<>();
     static double answer[] = new double[4];
 
+    
+    
     // 백준 15997 - 승부 예측
     public static void main(String[] args) throws IOException {
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
@@ -32,6 +34,11 @@ public class Main {
 
         for(int i = 0; i < 4; i++) System.out.println(answer[i]);
     }
+    
+    
+    
+    
+    
 
     // y좌표, x좌표, 확률, 4팀의 점수
     static void dfs(int y, int x, double percent, int score[]) {
@@ -65,6 +72,9 @@ public class Main {
         // win, draw, lose를 탐색하기 위한 for
         for(int j = 0; j < 3; j++) dfs(y + 1, j, percent, score.clone());
     }
+    
+    
+    
 
     private static double strToDouble(String str) {
         return Double.parseDouble(str);
