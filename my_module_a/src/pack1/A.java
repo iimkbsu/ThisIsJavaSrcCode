@@ -1,5 +1,8 @@
 package pack1;
 
+//B 패키지2 은닉처리
+//A 패키지1을 통해 모듈을 가져다 씀
+import pack2.B;
 
 //라이브러리(.jar) = 활용할 수 있는 클래스들 + 인터페이스들의 모음
 
@@ -11,5 +14,8 @@ public class A {
 
 	public void method() {
 		System.out.println("A-mehtod() 실행");
+		
+		B b = new B();
+		b.method();
 	}
 }
