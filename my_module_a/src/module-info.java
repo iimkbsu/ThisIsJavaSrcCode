@@ -7,4 +7,6 @@ module my_module_a {
 	//exports로 공개하지 않은 모듈은 사용할 수 없음
 	exports pack1;
 	//exports pack2;
+	
+	requires transitive my_module_b;
 }

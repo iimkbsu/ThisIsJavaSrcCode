@@ -1,15 +1,15 @@
 package app;
 
 import pack1.A;
-//import pack2.B;
 import pack3.C;
-import pack4.D;
+//import pack2.B;
+//import pack4.D;
 
 public class Main {
 
 	public static void main(String[] args) {
 		
-		//모듈로 
+		
 		A a = new A();
 		a.method();
 		
@@ -19,8 +19,11 @@ public class Main {
 		C c = new C();
 		c.method();
 		
-		D d = new D();
-		d.method();
+		C result = a.getC();
+		result.method();
+		
+//		D d = new D();
+//		d.method();
 
 	}
 
