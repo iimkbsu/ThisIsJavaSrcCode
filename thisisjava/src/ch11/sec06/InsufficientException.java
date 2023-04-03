@@ -18,6 +18,7 @@
 //일반예외를 상속하여 사용자 정의 예외를 만들어보자 (아래 코드가 기본 틀임)
 package ch11.sec06;
 
+@SuppressWarnings("serial")
 public class InsufficientException extends Exception {
 
 	//기본 생성자
