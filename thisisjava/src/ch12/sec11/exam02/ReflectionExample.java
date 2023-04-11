@@ -24,6 +24,27 @@
  		
  			*Declared는 '선언된' 이라는 뜻인데 사용자 선언 말고 자동 선언된 생성자도 포함임
  
+ 	
+ 	
+ 	- 리소스 경로 얻기 (이미지, xml, 프로퍼티 등 리소스의 경로)
+ 		- 클래스정보.getResource(String 리소스이름);					: 리소스 파일의 URL(경로) 리턴 (URL 타입)
+ 		- 클래스정보.getResource(String 리소스이름).getPath();			: 리소스 파일의 URL을 문자열 경로로 리턴 (String 타입)
+ 		- 클래스정보.getResourceAsStream(String 리소스이름);			: 리소스 파일의 InputStream(파일데이터)을 리턴 (InputStream 타입)
+ 		
+ 		
+ 			* 리소스 위치
+ 			 	- bin 폴더의 해당 클래스(.class)가 위치한 폴더
+ 		
+ 			* 자바 Stream (자세한 건 18장에서)
+ 				- 외부로 데이터를 가져오거나 보내는 흐름. 또는 그 흐름의 통로
+ 				- 다양한 데이터 소스를 표준화된 방법으로 다루기 위해 도입됨 (Set, List, Map 등의 사용법을 표준화시킴)
+ 				
+ 			* input/output Stream
+ 				- 바이트 기반 입출력 스트림의 최상위 추상 클래스
+ 				
+ 	
+ 	
+ 
  */
 
 
