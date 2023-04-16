@@ -1,6 +1,7 @@
 package app;
 
-
+import pack1.A;
+import pack2.B;
 
 public class Main {
 
