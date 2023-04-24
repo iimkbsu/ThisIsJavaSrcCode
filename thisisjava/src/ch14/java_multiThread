@@ -345,15 +345,210 @@ wait(), notify() 메소드를 이용한 스레드 제어 및 동기화
 ----------------------------------------------------------------------------------------------
 
 스레드 안전 종료
+	- run() 메소드를 이용하여 리소스를 정리한 후 빠르게 종료 시키는 방법
+		- 조건을 이용
+		- interrupt() 메소드 이용
+		
+*참고 : 강제종료인 stop() 메소드는 더 이상 사용하지 않음
+
+
+
+□□□□□□□□ 조건 이용하여 스레드 안전 종료 □□□□□□□□
+
+	while문을 이용하여 스레드를 실행하고 조건이 false가 되면 스레드를 빠져나오고 리소스를 정리
+	
+	
+	boolean go = true;
+	
+	@Override
+	void run(){
+		while(go){
+			//스레드 반복 실행문
+		}
+		//리소스 정리코드
+	}
+	
+	
+	
+□□□□□□□□ interrupt() 메소드 이용하여 안전 종료 □□□□□□□□
+	
+	*sleep(1)을 해줘야 해서 비효율
+	
+	
+	interrupt() 메소드는 스레드가 일시정지 상태일 때 InterruptedException을 발생시킴. 이를 예외처리 해주면 run()을 정상조료 시킬 수 있음
+	
+	<스레드>
+	
+	@Override
+	public void run(){
+		try{
+			while(true){
+				...
+				Thread.sleep(1); //스레드 순간 일시정지 반복 (Thread.join(), wait() 도 역시 인터럽트가 발생하므로 사용가능)
+			}
+		}catch(InterruptedException e){
+		}
+		//리소스 정리
+	}
+	--------------------------------
+	<main>
+	
+	Thread thread = new Thread();
+	thread.start();
+	....
+	thread.interrupt(); // interrupt() 메소드 실행 순간 스레드가 일시정지 상태라면 catch()로 넘어감
 
 
 
 
+□□□□□□□□ 효율적인 interrupted(), isInterrupted() 메소드로 안전종료 방법 □□□□□□□□
+
+	일시정지 없이 interrupt()메소드가 호출되었는지 여부를 boolean으로 리턴해주는 메소드를 사용
+	* sleep(1) 없어도 됨
+	
+
+	boolean a = Thread.interrupted();		//static 메소드임
+	boolean b = 스레드객체.isInterrupted();		//인스턴스 메소드임
+	
+	
+	
+------------------------------------------------------------------------------------
+
+
+데몬(Daemon) : 멀티태스킹 체제에서 사용자 제어 없이 백그라운드에서 돌면서 작업을 수행하는 프로그램
+
+데몬 스레드	
+	- 주 스레드를 작업에 도움을 주는 보조 스레드
+	- 주 스레드에서 생성할 수 있음
+	- 주 스레드가 종료되면 데몬 스레드도 같이 종료 (차이점. 기본 작업 스레드는 모든 스레드가 종료되어야 메인이 종료됨)
+	
+	
+	
+	□□□□□□□□ 데몬 스레드 만들기 □□□□□□□□
+	
+	주 스레드(or main에소드) 안에서 데몬이 될 스레드를 생성한 후 데몬스레드객체.setDaemon(true) 메소드로 데몬화 시킨 후 start() 해줌
+	
+	
+	public class DaemonThread extends Thread{
+		@Override
+		public void run(){
+			데몬 스레드가 작업할 내용
+		}
+	}
+	---------------------------
+	
+	public static void main(String[] args){
+		DaemonThread dt = new DaemonThread();
+		dt.setDaemon(true);
+		dt.start();
+	}
+
+
+----------------------------------------------------------------------------------------
+
+★☆★☆★☆ 매우 중요 ★☆★☆★☆
+
+풀(pool) - 작은 수영장(연못), 공동으로 이용할 데이터나 객체들을 모아두는 곳
+
+스레드 풀
+	- 복잡한 프로그램에서 다수의 병렬작업 때문에 여러 개의 스레드를 사용하게 되는데, 이 때 스레드의 폭증을 막는 방법
+	- 스레드의 개수를 제한하고 이 스레드들이 작업 큐(FIFO)에서 대기중인 작업들을 순서대로 하나씩 갖고와서 처리한 후 이를 반복 (작업 완료한 스레드 재사용)
+	- 스레드 개수가 폭증하여 앱의 실행이 저하되거나 죽는 것을 방지할 수 있음
 
 
 
+	□□□□□□□□ 스레드 풀 생성 □□□□□□□□
+		
+		# java.util.concurrent 패키지에서 ExecutorService 인터페이스, Executors 클래스 제공
+		
+			*concurrent : 동시 발생하는, 공존하는
+			
+			
+		
+		방법 1. Executors 클래스의 static 메소드 이용하여 ExecutorService 인터페이스 구현객체 만들기
+		
+			- newCachedThreadPool()				: 초기 수:0	코어 수:0 		최대 수:integer.MAX_VALUE		무작업 스레드 유지기간 :60초	사용 여부: 제한이 없어 잘 사용 안 함
+			- newFixedThreadPool(int n)			: 초기 수:0	코어 수:생성 수		최대 수:n						무작업 스레드 유지기간 :무한 	사용 여부: 많이 사용 함
+			
+			import java.util.concurrent.Executors; //클래스
+			import java.util.concurrent.ExecutorService; //인터페이스
+		
+			ExecutorService es = Executors.newCachedThreadPool(); 
+			또는
+			
+			ExecutorService es = Executors.newFixedThreadPool(5);
+		
+		
+		
+		방법 2. 위의 두 메소드 없이 ThreadPoolExecutor 클래스(부모 클래스가 ExecutorService 구현 클래스임)로 스레드풀 만들기
+			
+			* ThreadPoolExecutor 클래스 생성자가 조금 복잡하고 구체적임
+			
+			ExecutorService threadPool = new ThreadPoolExecutor(
+				3,									// 코어 스레드 개수 (계속 유지되는 스레드 3개)
+				100,								// 최대 스레드 개수 (제거 될 수 있는 스레드 97개)
+				120L,								// 무작업 스레드 유지 시간
+				TimeUnit.SECONDS,					// 유지 시간 단위
+				new SynchronousQueue<Runnable>()	// 동기화 작업 큐
+			);
+		
 
 
 
+	□□□□□□□□ 스레드 풀 종료 □□□□□□□□
+		
+		스레드는 모든 작업 스레드가 종료되어야 메인 스레드가 종료되고 작업이 마무리 됨 (데몬 스레드 아님)
+		
+		ExecutorService 인터페이스의 shutdown(), shutdownNow() 메소드 사용하여 모든 작업 스레드 종료
+		
+		
+		(void 리턴 타입) 				shutdown() 메소드			: 현재 처리 중 작업, 큐 대기 작업을 모두 처리완료 후 스레드풀 종료
+		(List<Runnable> 리턴 타입) 	shutdownNow() 메소드		: 현재 처리 중 작업은 interrupt 시켜 중지, 대기 작업은 List리턴값으로 보내고 스레드풀 바로 종료 (중지된 작업은 소실됨)
+		
+		
+		
+		
+
+	□□□□□□□□ 작업 생성과 처리 요청 □□□□□□□□
+	
+	< 작업생성 >
+		- 하나의 작업은 Runnable 또는 Callable 인터페이스의 구현 클래스로 표현 및 객체 생성
+		
+		
+		<Ruunalbe 익명 구현객체>	// run() 리턴값 : 없음 , 많이 씀
+		
+		new Runnable(){
+			@Override
+			public void run(){
+				//스레드 처리 작업 내용
+			}
+		}
+		------------------------------
+		
+		<Callable 익명 구현객체>	// call() 리턴값 : Callable<T>에서 지정한 T 타입 파라미터와 동일한 타입, 많이 안 씀
+		
+		new Callable<T> {
+			@Override
+			public T call() throws Exception {
+				//스레드 처리 작업 내용
+				return T;
+			}
+		}
+		
+		
+	
+	< 작업처리 요청 >
+		- ExcecutorService 인터페이스에서 두 가지 메소드 제공
+		- 생성된 객체 작업 큐에 작업을 저장 및 처리하는 방법
+		
+		(void 리턴타입)		execute(Runnable command)	: Runnable을 작업 큐에 저장, 처리결과 리턴 없음
+		(Future<T> 리턴타입)	submit(Callable<T> task)	: Callable을 작업 큐에 저장, 처리 결과 Future를 T 타입으로 리턴
+		
+		
+		*참고 new SynchronousQueue<Runnable>() //작업 큐 객체 생성
+		
+		
+		
+		
 
 	
