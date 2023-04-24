@@ -25,10 +25,44 @@ package Programmer;
 
 public class TTe {
 	
+	public static String solution(String code) {
+		String answer = "";
+		int mode = 0; //0
+
+		
+		
+		for(int i=0; i<code.length(); i++) {
+			if(mode==0 && code.charAt(i) != '1') {
+				if(i%2 == 0) {
+					answer += code.charAt(i);
+				}
+			}
+			else if(mode == 0 && code.charAt(i) == '1') {
+				mode = mode + 1;
+			}
+			else if(mode == 1 && code.charAt(i) != '1' ) {
+				if(i%2 != 0) {
+					answer += code.charAt(i);
+				}
+			}
+			else if(mode ==1 && code.charAt(i) == '1') {
+				mode = mode * 0;
+			}
+				
+		}
+		
+		if(answer.equals("")) {
+			return "EMPTY";
+		}
+		
+		return answer;
+	}
+	
 
 	
 	public static void main(String[] args) {
 		
+		System.out.println(TTe.solution("abcde11abcde"));
 
 	}
 	
