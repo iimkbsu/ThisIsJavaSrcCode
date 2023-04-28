@@ -1,4 +1,115 @@
 
+스레드 전체 요약.
+
+	스레드 하나씩 만들기
+
+	메인 스레드 작업을 여러 스레드에게 나눠서 동시에 작업시키고 싶을 때(비동기)
+		- 스레드 클래스를 사용하여 스레드 객체를 만들거나 익명자식객체로 run() 메소드를 실행
+		- 러너블 인터페이스를 사용하여 러너블 구현객체를 만들거나 익명구현객체로 run() 메소드 실행
+		- 메인 스레드에서 구현된 스레드들이라서 전체 스레드가 다 끝나야 메인 스레드가 끝나고 프로세스가 종료됨. 예외처리 잘 해야 함.
+	
+	동기화
+		- synchronized 메소드나 synchronized(공유 스레드객체 or 러너블객체){}를 통해 하나의 스레드로만 실행하게 만들 수 있음.
+	
+	스레드 상태 확인 및 변경
+	
+		- 스레드 이름 설정			: setName("###");
+		- 스레드 이름 호출 			: getName();
+		- 스레드 실행 				: start();
+		- 현재 돌아가는 스레드 호출 	: Thread.currentThread();
+		
+		- 실행 → 일시정지
+			- wait(); 			: 동기화블록 내에서만 사용.
+			- join();			: 스레드1에서 스레드2.join() 호출하면 스레드2가 끝날 때 까지 일시정지 했다가 스레드2가 끝나면 스레드1 실행대기 및 실행
+			- sleep(밀리초);		: 밀리초 동안 일시정지 후 실행대기로 빠짐.
+			
+		- 일시정지 → 실행대기
+			- interrupt() 				: 예외 발생시키기. 실행대기 또는 종료 선언 가능
+			- notify(), notifyAll()		: 동기화블록 내에서 호출된 wait()으로 인해 일시정지 된 스레드를 실행대기로 만듦
+		
+		- 실행 → 실행대기
+			- yield()	: 실행하다가 잠깐 실행대기로 빠지고 다른 스레드에게 실행 양보
+			
+			
+		# sleep(), wait(), join()은 try, catch로 예외가 발생했을 경우 처리 대비를 해줘야 함
+	
+	
+	스레드 안전 종료
+		- Thread.interrupted()	: 인터럽트 발생한 경우 true 아닌경우 false 반환. 조건으로 사용
+		- thread객체.isInterrupted()	: 인터럽트 발생한 경우 true 아닌경우 false 반환. 보통 run() 메소드 블록 안에서 this.isInterrupted() 조건으로 사용
+		
+	
+	데몬스레드 (주인 스레드가 종료되면 강제 종료되는 스레드)
+		- 일반적으로 스레드1에서 호출된 스레드2가 다 종료되어야 스레드1이 종료됨.
+		- 스레드1에서 호출된 데몬스레드는 스레드1이 종료되면 데몬스레드 강제 종료됨.
+		
+		- 스레드.setDaemon(true);
+		
+
+
+
+	스레드풀 만들어 하나의 반복 작업을 여러 스레드가 작업큐에서 순서대로 빼서 동시에 작업함
+
+	
+	스레드풀
+		- 어떤 반복되는 한 작업을 여러 스레드가 분담해서 동시에 처리하게 하는 기술
+		- 작업큐에 작업이 순서대로 넣어지고 이를 처리 요청하여 하나씩 꺼내서 여러 스레드들이 실행함
+	
+	
+	필요한 import
+	
+	import java.util.concurrent.*;
+	
+		- Executors				: 클래스
+		- ExecutorService		: 인터페이스 (스레드풀 구현객체가 됨)
+		
+		- ThreadPoolExecutor	: 클래스
+		- SynchronousQueue<T>	: 작업큐 클래스
+		- TimeUnit				: 시간 단위 ENUM
+		
+		- Callable<T>			: 인터페이스, (Runnable과 비슷. 단, 작업 처리 결과를 T 타입의 Future로 리턴)
+		- Future<T>				: 인터페이스, Callable 결과를 T타입으로 받음
+		
+		
+	스레드풀 생성
+		
+		- ExecutorService myThreadPool1 = Executors.newCachedThreadPool();
+		
+		- ExecutorService myThreadPool2 = Executors.newFixedThreadPool(최대스레드개수);
+		
+		- ExecutorService myThreadPool3 = ThreadPoolExecutor(초기스레드개수, 최대스레드개수, 스레드유지기간L, TimeUnit.기간단위, new SynchronousQueue<Runnable>() );
+		
+		
+	스레드풀 execute 으로 실행
+	
+		 myThreadPool.execute(new Runnable(){
+			@Override
+			public void run(){
+				//스레드풀에서 스레드들이 나눠서 처리할 내용
+			}
+		});
+		
+	
+	
+	스레드풀 sumbit으로 실행하고 결과 future로 리턴받기
+		
+		Future<Integer> future = myThreadPool.submit(new Callable<Integer>(){
+			@Override
+			public Integer call(){
+				int sum = 0;
+				return sum;
+			}
+		});
+		
+		int result = future.get();
+		System.out.println(result);
+		
+
+--------------------------------------------------------------------------------------------------------------------------------------
+
+	
+
+
 CPU(Central Processing Unit)의 구성
 
 	- Core(코어)	: CPU에서 핵심요소. 각종 연산을 담당하며 멀티 core를 장착한 CPU가 대세

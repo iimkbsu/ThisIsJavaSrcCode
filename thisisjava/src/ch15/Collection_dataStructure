@@ -1,0 +1,136 @@
+컬렉션 자료구조
+
+	1. 컬렉션 프레임 워크
+	2. List 컬렉션
+	3. Set 컬렉션
+	4. Map 컬렉션
+	5. 검색 기능을 강화시킨 컬렉션
+	6. LIFO, FIFO 컬렉션
+	7. 동기화된 컬렉션
+	8. 수정할 수 없는 컬렉션
+	
+-----------------------------------------------------------------------------------------------------------------------------
+	
+	데이터 자료구조
+		- 컴퓨터가 데이터를 효율적으로 다룰 수 있게 도와주는 데이터 보관 방식, 데이터 연산에 관한 총체
+
+	자바 컬렉션
+		- 데이터들의 집합, 데이터 자료구조 모음
+	
+	자바 컬렉션 프레임워크 (JCF)
+		- 컬렉션 메소드, 컬렉션 구현에 필요한 인터페이스 제공
+		
+	
+	
+	자바 컬렉션 종류
+	
+		# Map은 컬렉션 상속받진 않지만 컬렉션으로 분류함
+		# 자바 컬렉션은 보통 list set map을 말함
+		# [인터페이스], 클래스
+		# 클래스는 java.util 패기지에 있음
+		
+		
+	[Collection]
+	
+		- [List] : 순서 O, 중복 O 
+			- ArrayList
+			- LinkedList
+			- Vector
+				- Stack
+				
+		- [Set] : 순서 X, 중복 X 
+			- HashSet
+			- LinkedHashSet
+			- EnumSet
+			
+			- [SortedSet]
+				- [NavigableSet]
+					- TreeSet
+			
+		- [Queue] : List와 비슷. 순서 O, 중복 O 
+			- PriorityQueue
+			
+			- [Deque]
+				- LinkedList
+				- ArrayDeque
+	
+	
+	[Map] : 키(key), 값(value) 쌍으로 이뤄진 데이터(=엔트리) 집합, 순서 X, key 중복 X, 값 중복 O
+	
+		- Hashtable
+			- Properties
+		
+		- HashMap
+			- LinkedHashMap
+		
+			
+		- [SortedMap]
+			- [NavigableMap]
+				- TreeMap
+	    
+	    
+----------------------------------------------------------------------------------------------------
+
+	List 컬렉션 
+		- 배열과 다르게 생성 후 길이 수정 가능
+	
+	
+	주요 메소드
+
+		add(인덱스번호, 엘리먼트)			: 인덱스 자리에 추가, 리턴 없음
+		add(추가할 엘리먼트)				: 맨 끝에 추가, 추가 결과 boolean 반환
+		set(인텍스번호, 교체할 엘리먼트)	: 인덱스번호 엘리먼트를 교체
+		 
+		contains(객체)				: 리스트 컬렉션에 객체 저장여부 판단. boolean 반환
+		get(인덱스번호)					: 인덱스 번호의 객체 리턴
+		isEmpty()					: 리스트 컬렉션 비어있는지 여부 판단. boolean 반환
+		size()						: 리스트 컬렉션에 저장된 객체 수 리턴
+	    
+	    clear()						: 리스트 컬렉션의 모든 객체 삭제
+	    remove(인덱스번호)				: 인덱스의 객체 삭제
+	    remove(객체)					: 객체 탐색 후 삭제. 삭제 성공에 따라 boolean 반환
+	    
+
+
+	    
+	□□□□ ArrayList 생성 □□□□
+	
+		import java.util.List;
+		import java.util.ArrayList;
+	
+		List<Integer> myList = new ArrayList<>();	//Integer 타입의 엘리멘트를 저장하는 ArrayList를 List 인터페이스 타입으로 생성
+	
+		List myList = new ArrayList();	// 모든 타입 저장
+	
+		ArrayList<String> myList = new ArrayList<>();	//사용가능하지만 다형성, 유연성이 떨어짐
+		
+
+
+
+	
+	Vector
+		- ArrayList와 비슷
+		- Collection 프레임워크에 없는 메소드도 사용가능
+		- Vector 접근은 항상 동기화 되어 있으므로 하나의 스레드만 접근해서 사용 가능
+		- 거의 스레드 환경에서만 사용
+		
+	□□□□ Vector 생성 □□□□
+	
+		import java.util.List;
+		import java.util.Vector;
+	
+		List<E> myList = new Vector<>(); // E타입의 엘리멘트를 저장하는 Vector를 List 인터페이스 타입으로 생성
+		
+		List myList = new Vector(); //모든 타입 저장
+		
+		Vector<E> myList = new Vector<>(); //사용가능하지만 다형성, 유연성이 떨어짐
+		
+	
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
