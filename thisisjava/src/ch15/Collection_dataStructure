@@ -9,7 +9,7 @@
 	7. 동기화된 컬렉션
 	8. 수정할 수 없는 컬렉션
 	
------------------------------------------------------------------------------------------------------------------------------
+------------------------------------------ 자바 컬렉션 기본정보 ----------------------------------------------------------------
 	
 	데이터 자료구조
 		- 컴퓨터가 데이터를 효율적으로 다룰 수 있게 도와주는 데이터 보관 방식, 데이터 연산에 관한 총체
@@ -69,7 +69,13 @@
 				- TreeMap
 	    
 	    
-----------------------------------------------------------------------------------------------------
+	    
+	    
+	    
+	    
+	    
+	    
+-------------------------------------[Collection] [List]---------------------------------------------------
 
 	[Collection]
 	
@@ -102,6 +108,12 @@
 	    
 
 
+----------------------
+
+	ArrayList
+	
+		- List 컬렉션의 가장 기본
+		- 배열과 다르게 생성 후 길이 수정 가능
 	    
 	□□□□ ArrayList 생성 □□□□
 	
@@ -119,6 +131,7 @@
 -----------------
 	
 	Vector
+	
 		- ArrayList와 비슷
 		- Collection 프레임워크에 없는 메소드도 사용가능
 		- Vector 접근은 항상 동기화 되어 있으므로 하나의 스레드만 접근해서 사용 가능
@@ -136,9 +149,10 @@
 		Vector<E> myList = new Vector<>(); //사용가능하지만 다형성, 유연성이 떨어짐
 		
 	
------------------------	    
+----------------    
 	    
 	LinkedList
+	
 		- ArrayList와 사용 방법 동일
 		- 단. ArrayList는 연속된 배열에 객체를 저장하고 만약 하나의 객체가 삭제되면 그 뒤의 객체들이 전부 앞으로 하나씩 당겨짐
 		- LinkedList는 연속되지않은 배열들을 링크를 통해 순서를 정하고 인접한 객체를 체인처럼 연결해서 관리하므로 하나의 객체가 삭제되어도 인접한 양 옆 두 개의 링크만 바꿔주면 됨 (효율 굿)
@@ -170,7 +184,16 @@
 	# 문자열로 바꾸기
 		String.valueOf(바꿀데이터);
 
-----------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+------------------------------------[Collection] [Set]-----------------------------------------------
 
 	[Collection]
 	
@@ -213,9 +236,10 @@
 
 
 	    
-	   
+--------------------	   
 
 	HashSet
+	
 		- 가장 많이 사용하는 Set 컬렉션
 		- 동등객체 중복저장 안 함 (동등객체란, hashCode() 리턴값이 같을 때 equals() 리턴값도 같은 객체)
 		
@@ -257,7 +281,81 @@
 		# 만약 HashSet 객체를 검사해서 같은 객체를 Set에서 remove 하거나 add 하고 싶을 때에는 for문으로 안 되고 무조건 Iterator 사용해야 함.
 		# for문의 반복 횟수가 for문을 돌면서 add, remove 하게 되면 변하기 때문에 예외 발생함.
 
----------------------------------------------------------------------------------------------------------------
+
+-------------------
+
+	검색 기능 강화한 Set 컬렉션
+	
+	TreeSet
+	
+		- 이진 트리 기반의 Set 컬렉션
+		- 기본적으로 ascending(오름차순) 정렬 되어 있음 (작은 건 왼쪽, 큰 건 오른쪽)
+		- 루트 노드 1개 → 부모 노드 최대 2개 → 자식 노드 최대 2개 → ... 리프 노트 최대 2개
+		- 노드 구성
+			- left 자식노드객체[null], 노드객체, right 자시노드객체[null]
+			
+	
+	TreeSet 특화 검색 관련 메소드
+	
+				<TreeSet 객체 리턴. 단일객체 탐색 특화>
+				
+		first()					: 제일 낮은 TreeSet객체 리턴
+		last()					: 제일 높은 TreeSet객체 리턴
+		
+		pollFirst()				: 가장 낮은 TreeSet객체 꺼내서 리턴하고 컬렉션에서 삭제
+		pollLast()				: 가장 높은 TreeSet객체 꺼내서 리턴하고 컬렉션에서 삭제
+		
+		lower(E e)				: e 바로 아래 TreeSet객체 리턴
+		higher(E e)				: e 바로 위 TreeSet객체 리턴
+		
+		floor(E e)				: e와 동등한 객체 있으면 그 TreeSet객체 리턴, 없으면 e 바로 아래 TreeSet객체 리턴
+		ceiling(E e)			: e와 동등한 객체 있으면 그 TreeSet객체 리턴, 없으면 e 바로 위 TreeSet객체 리턴
+
+
+
+				<Iterator 구현 객체 리턴>
+				
+		descendingIterator()	: TreeSet을 내림차순 정렬하여 Iterator 구현객체 리턴
+		iterator()				: TreeSet을 Iterator 구현객체 리턴
+		
+		
+		
+				<NavigableSet 객체 리턴. 범위 탐색 특화, NavigableSet 인터페이스 인스턴스 메소드, TreeSet도 사용 가능>
+				
+		descendingSet()								: 내림차순 정렬된 NavigableSet 인터페이스 타입 구현 객체 리턴
+		headSet(E e, true/false)					: e 이하, 미만 객체들을 NavigableSet 리턴, e포함 true/false
+		tailSet(E e, true/false)					: e 이상, 초과 객체들을 NavigableSet 리턴, e포함 true/false
+		subSet(E e1, true/false, E e2, true/false)	: e1 ~ e2 사이 객체를 NavigableSet에 저장. true/false로 객체 포함여부
+		
+		
+	□□□□ TreeSet 컬렉션 만들기 □□□□
+		
+		TreeSet<E> myTreeSet = new TreeSet<>();
+		
+			# Set이 아닌 TreeSet 클래스타입의 객체로 만듦 (∵ TreeSet 클래스에만 검색 관련 메소드 정의되어 있음)
+		
+	
+	
+	□□□□ TreeSet으로 Iterator 구현객체 만들기 □□□□
+	
+		TreeSet<E> myTreeSet = new TreeSet<>();
+		Iterator<E> myIterator = myTreeSet.iterator(); 	//TreeSet은 자동으로 오름차순 정렬되어있음
+		Iterator<E> myDescendingIterator = myTreeSet.descendingIterator(); 	//내림차순 정렬 Iterator
+		
+		
+	□□□□ TreeSet으로 NavigableSet 구현객체 만들기 (범위탐색 특화) □□□□
+	
+		TreeSet<E> myTreeSet = new TreeSet<>();
+		NavigableSet<E> myNGSet = myTreeSet;
+		
+		NavigableSet<E> myNGSet = myTreeSet.descendingSet(); //TreeSet을 내림차순으로 정렬하여 NavigableSet에 저장
+		
+		
+
+
+
+
+--------------------------------------- [Map] -------------------------------------------------
 
 	[Map] : 키(key), 값(value) 쌍으로 이뤄진 데이터(=엔트리) 집합, 순서 X, key 중복 X, 값 중복 O
 	
@@ -282,7 +380,7 @@
 
 
 
-	Map 컬렉션의 주요 공통 메소드
+	Map 인터페이스 컬렉션의 주요 공통 메소드
 	
 		put(키, 값)				: 키와 값으로 Map에 엔트리 추가. (저장된 엔트리의 값만 리턴)
 		
@@ -294,10 +392,11 @@
 		get(키)					: 주어진 키의 엔트리를 찾아서 값만 리턴. (값 리턴)
 		size()					: Map에 저장된 엔트리 객체 개수 리턴(키 갯수와 일치). (int 리턴)
 		
-		
+				<Set 리턴>
 		keySet()				: Map에 저장된 모든 엔트리 객체의 키만 Set에 담아서 Set리턴. (Set<키> 리턴)
 		entrySet()				: Map에 저장된 모든 엔트리 객체(키+값)를 Set에 담아서 Set리턴. (Set<Map.Entry<키,값>> 리턴)
 		
+				<Collection 리턴>
 		values()				: Map에 저장된 모든 엔트리 객체의 값만 Collection에 담아서 리턴. (Collection<값> 리턴)
 		
 		
@@ -309,9 +408,11 @@
 			entry.getKey()		: 엔트리의 키 갖고오기. 리턴 키
 			entry.getValue()	: 엔트리의 값 갖고오기. 리턴 값
 
-------------------------------------------------------------------------------------------
 
-	HashMap
+------------------
+
+	HashMap 
+	
 		- 키 = 동등객체 (hashCode() 리턴값이 같을 때 equals() 리턴값 같음)
 		- 동등객체 중복 방지
 		- Set 인터페이스 구현 객체에 키 또는 엔트리(키+값)를 담을 수 있음. 이후에 Iterator 사용하여 엔트리 객체 뽑아 쓰기 가능
@@ -356,20 +457,94 @@
 	
 -------------------	
 	
-	Hashtable
+	Hashtable 
+	
 		- HashMap과 같은데, 동기화 되어있어 하나의 스레드만 Hashtable 접근가능 (ArrayList와 Vector와 관계 비슷)
-		- 
+		- 멀티 스레드 환경에서 동기화가 필요한 엔트리를 저장할 때 사용
+		
+	
+	□□□□ Hashtable 만들기 □□□□
+
+		Map<K, V> myHashtable = new Hashtable<>();
+		
+		Map myHashtable = new Hashtable(); //모든 타입 가능. 잘 안 씀.
+		
+		Thread myThread1 = new Thread(){
+			@Override
+			public void run(){
+				myHashtable.put(K k, V v);
+			}
+		};
+		
+		Thread myThread2 = new THread(){
+			@Override
+			public void run(){
+				myHashtable.put(K k, V v);
+			}
+		};
+		
+		
+
+	# 동기화된 맵(해시테이블)에 각 한 스레드만 접근하여 사용
+
+
+---------------
+
+	Properties 클래스
+		- 동기화 되어 있음 (∵ Hashtable의 자식클래스)
+		- 엔트리 키, 값을 String 타입으로 제한한 컬렉션
+		- 파일명.properties(=프로퍼티 파일)를 읽을 때 사용
+		
+			# 예제.properties (프로퍼티 파일) 
+			
+				// String키=String값 으로 구성
+				// ISO 8859-1 문자셋으로 구성되어있음
+				// \u 는 유니코드를 나타냄
+			
+				driver=oracle.jdbc.OracleDriver
+				url=jdbc:oracle:thin:@localhost:1521:orcl
+				username=scott
+				password=tiger
+				admin=\uD64D\uAE38\uB3D9
+				
+				
+
+	□□□□ Properties 만들기 □□□□
+
+		Properties myProperties = new Properties();
+		
+		myProperties.load(클래스명.class.getResourceAsStream("프로퍼티명.properties"));
+		
+			# 프로퍼티 파일은 보통 관련 클래스와 같은 경로에 리소스로 저장되므로 리플렉션 클래스를 통해 리소스스트림(inputStream객체)을 load()시켜 myProperties로 저장
+
+
+
+-----------------
+
+	검색 기능 강화한 Map 컬렉션
+	
+	TreeMap
+	
+		- TreeSet과 매우 비슷
+		- 이진트리 Map 컬렉션
+		- 객체 대신 Entry의 키와 값 저장. (Entry 저장 아님)
+		- 키를 오름차순으로 정렬
+	
+	
+	
+	□□□□ TreeMap 컬렉션 만들기 □□□□
+	
+		TreeMap<K, V> myTreeMap = new TreeMap<>();
+		
+		 # Map이 아닌 TreeMap 타입으로 저장. (∵ TreeMap에만 있는 검색 특화 메소드 사용해야 함)
+	
+	
 
 
 
 
 
-
-
-
-
-
-
+-----------------------------------------------------------------------------------------------
 
 
 
