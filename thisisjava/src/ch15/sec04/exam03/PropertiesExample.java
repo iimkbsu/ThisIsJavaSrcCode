@@ -8,7 +8,7 @@
 //			
 //				// String키=String값 으로 구성
 //				// ISO 8859-1 문자셋으로 구성되어있음
-//				// \u 는 유니코드를 나타냄
+//				// u 는 유니코드를 나타냄
 //			
 //				driver=oracle.jdbc.OracleDriver
 //				url=jdbc:oracle:thin:@localhost:1521:orcl

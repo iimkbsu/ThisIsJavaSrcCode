@@ -490,7 +490,8 @@
 
 ---------------
 
-	Properties 클래스
+	Properties 
+	
 		- 동기화 되어 있음 (∵ Hashtable의 자식클래스)
 		- 엔트리 키, 값을 String 타입으로 제한한 컬렉션
 		- 파일명.properties(=프로퍼티 파일)를 읽을 때 사용
@@ -527,29 +528,294 @@
 	
 		- TreeSet과 매우 비슷
 		- 이진트리 Map 컬렉션
-		- 객체 대신 Entry의 키와 값 저장. (Entry 저장 아님)
+		- 객체 대신 Entry의 키와 값 저장
 		- 키를 오름차순으로 정렬
 	
 	
+	TreeMap 검색 특화 메소드
+		
+					< Map.Entry 리턴 >
+		firstEntry()		: 제일 낮은 Entry 리턴
+		lastEntry()			: 제일 높은 Entry 리턴
+		
+		lowerEntry(키)		: 키 바로 아래 Entry 리턴
+		higherEntry(키)		: 키 바로 위 Entry 리턴
+		floorEntry(키)		: 키 있으면 해당 키 Entry 리턴, 없으면 바로 아래 Entry 리턴
+		ceilingEntry(키)		: 키 있으면 해당 키 Entry 리턴, 없으면 바로 위 Entry 리턴
+		
+		pollFirstEntry()	: 제일 낮은 Entry 리턴 후 Map에서 삭제
+		pollLastEntry()		: 제일 높은 Entry 리턴 후 Map에서 삭제
+		
+		
+					< NavigableSet 리턴 >
+		descendingKeySet()	: 내림차순 정렬한 키를 NavigableSet으로 리턴
+		navigableKeySet()	: Map의 Entry를 NavigableSet으로 리턴
+		
+		
+					< NavigableMap 리턴 >
+		descendingMap()		: 내립차순 정렬한 Entry들을 NavigableMap으로 리턴
+		
+		headMap(키, true/false)	: 키 이하/미만 Entry들을 NavigableMap으로 리턴
+		tailMap(키, true/false)	: 키 이상/초과 Entry들을 NavigableMap으로 리턴
+		
+		subMap(키1, true/false, 키2, true/false)	: 키1~키2 Entry들을 NavigableMap으로 리턴, 키1 키2 포함여부 true/false
+		
+		
+		
+		
 	
 	□□□□ TreeMap 컬렉션 만들기 □□□□
 	
 		TreeMap<K, V> myTreeMap = new TreeMap<>();
 		
 		 # Map이 아닌 TreeMap 타입으로 저장. (∵ TreeMap에만 있는 검색 특화 메소드 사용해야 함)
+		 
+		 
+		 
+	□□□□ TreeMap을 Set 컬렉션으로 만들기 □□□□
+	
+		Set<Entry<K, V>> myEntrySet = myTreeMap.entrySet();
 	
 	
+	
+	□□□□ TreeMap에 있는 키만 내림차순 정렬로 NavigableSet 컬렉션으로 만들기 □□□□
 
+		NavigableSet<String> myDescendingSet = TreeMap.descendingKeySet();
+		
+		
+		
+	□□□□ TreeMap Entry를 내림차순 정렬로 NavigableMap 컬렉션으로 만들기 □□□□	
 
+		NavigableMap<String, Integer> myDescendingMap = TreeMap.descendingMap();
+		
+	
+	
+	□□□□ TreeMap Entry에서 키1 <= Entry <= 키2 인 Entry를 NavigableMap 컬렉션으로 만들기 □□□□	
 
-
-
+		NavigableMap<String, Integer> myMap = TreeMap.subMap("키1", true, "키2", true);
+		
+		
+		
 -----------------------------------------------------------------------------------------------
 
 
+	Comparable & Comparator
+	
+	
+		Comparable 인터페이스
+		
+		- TreeSet은 객체, TreeMap은 객체 키를 비교하여 자동 오름차순 정렬이 되는데,
+		- 이는 Comparable 인터페이스의 compareTo() 메소드를 재정의 하여 정수 리턴값으로 비교할 수 있기 때문.
+		- 주어진 객체와 같다면 0, 보다 크다면 +, 보다 작으면 - 리턴하게 만듦
+		
+		
+		□□□□ compareTo(E) 메소드 재정의하기 □□□□
+		
+		public class E implements Comparable<E>{
+			@Override
+			public int compareTo(E e){
+				if( == ){
+					return 0;
+				}else if( < ){
+					return 1/-1;
+				}else{
+					return -1/1;
+				}
+				 //오름차순 내림차순 둘 다 가능
+			}
+		}
+		
+		------- Comparable<E> 객체 저장 방법 1
+		
+		TreeSet<E> myTreeSet = new TreeSet<>();
+		myTreeSet.add(new E());
+		...
+		for(E e : myTreeSet){
+			// Comparable 인터페이스 구현 클래스 E의 compareTo()메소드 리턴값에 따라 오름/내림차순으로 정렬되어 나옴
+		}
+		
+		-------- Comparable<E> 객체 저장 방법 2
+		
+
+		TreeMap<E, V> myTreeMap = new TreeMap<>();
+		myTreeMap.add(new E(), null);
+		...
+		
+		Set<E> myKeySet = myTreeMap.keySet();
+		Iterator<E> myIterator = myKeySet.iterator();
+		
+		while(myIterator.hasNext()){
+			E e = myIterator.next();
+			System.out.println(e.key + e.value);
+		}
+		
+		
+		
 
 
+	Comparator
+	
+		- 클래스가 Comparable 구현 클래스가 아닐 때에도 TreeSet, TreeMap에 저장하는 방법이 있나? Yes
+		- 비교자 구현 클래스를 하나 만들고 메인에서 Tree 객체를 생성할 때 구현객체를 매개변수로 넣어줌.
+		
+		- Comparable 인터페이스를 구현하지 않은 일반 클래스 + Comparator 비교자 인터페이스 구현한 비교자클래스 객체 + TreeSet(비교자클래스객체) or TreeMap(비교자클래스객체)
+	
+	
+	□□□□ Comparator 구현 클래스 만들기 □□□□
+	
+		public class myComparator implements Comparator<비교할클래스> {
+			@Override
+			public int compare(클래스 o1, 클래스 o2){
+				if... return 0/1/-1
+				else if ... return 0/1/-1
+				else return 0/1/-1
+			}
+		}
+		
+		
+	□□□□ Comparator 사용 □□□□	
+	
+		TreeSet<비교할클래스> myTreeSet = new TreeSet<>(new myComparator());
+		
+		myTreeSet.add(new 비교할클래스(...));
+		...
+		
 
+
+-------------------------------------------------------------------------------------
+	
+	[Collection]
+	
+		- [List] : 순서 O, 중복 O, Null 여러 개 저장 가능
+			- ArrayList
+			- LinkedList
+			- Vector
+				- Stack
+				
+		- [Queue] : List와 비슷. 순서 O, 중복 O 
+			- PriorityQueue
+			
+			- [Deque]
+				- LinkedList
+				- ArrayDeque
+
+ 스택, 큐
+ 
+ 배열에서 발전된 형태
+ 두 자료구조는 형태는 비슷하나 자료 처리 방식이 다름
+ 
+ **********************************************************************
+ 
+ Stack (통 모양) - LIFO(Last In First Out, 후입선출), 삽입 삭제가 top 부분에서만 일어남
+ 
+ |		|
+ |	top	| 3	 <- 삽입, 삭제가 일어나는 제일 끝 자료 위치
+ |	자료	| 2
+ |	자료	| 1
+ --------
+ 
+ 	Stack<E> myStack = new Stack<>();
+
+	myStack.push(E item);		: top 자리에 item 삽입
+	myStack.pop();				: top 자리에서 item 반출 (성공 item리턴/ 실패 예외발생)
+	
+	myStack.peek();				: top 자리 객체 확인 (성공 item리턴/ 실패 예외발생)
+	myStack.empty();			: true/false 반환
+	myStack.search(E item);		: item의 int 인덱스 반환 (1부터시작, 실패 -1 리턴)
+	
+	
+
+ ************************************************************************
+ 
+ Queue (관통형) - FIFO(First In First Out, 선입선출), 삽입은 rear 삭제는 front에서 일어남
+ 
+ 
+ 		9 8 7  6  5  4  3 2  1
+ 							peek할 위치
+ 		------------------------
+ add ->	새값 값 값 값 값 값 값 값 지울값 ->poll
+ 		------------------------ㄴ
+ 		rear				front
+ 
+ 	
+ 	Queue<E> myQueue = new Queue<>();
+ 	
+ 	myQueue.offer(E e);		: e 삽입. (성공 true/ 실패 false)
+ 	myQueue.poll();			: front 자리에서 item 반출 (성공 item 리턴/ 실패 null 리턴)
+ 	
+ 	myQueue.add(E e);		: e 삽입. (성공 true/ 실패 예외발생)
+ 	myQueue.remove();		: front 자리에서 item 반출 (성공 item 리턴/ 실패 예외발생)
+ 	
+ 	myQueue.element();		: front 자리 객체 확인 (성공 item 리턴/ 실패 예외발생)
+ 	myQueue.peek();			: front 자리 객체 확인 (성공 item 리턴/ 실패 null 리턴)
+ 	myQueue.isEmpty();		: true/false 리턴
+
+ 
+ 
+ 종류 : 너비 우선 탐색 (BFS)
+ 
+ 우선순위 큐 (힙을 이용한 큐) : 트리구조를 가짐
+ 
+ ******************************************************************************
+ 
+ 
+ 	Vector, Hashtable 이외의 비동기 컬렉션을 동기화 컬렉션으로 만들기
+ 	
+ 		- ArrayList의 동기화 버전인 Vector
+ 		- HashMap의 동기화 버전인 Hashtable
+ 		- 위의 두 개로 처음부터 컬렉션을 만들면 좋겠지만 대부분의 컬렉션은 비동기로 제작됨
+ 		- 이미 비동기로 만들어진 컬렉션 ArrayList, HashSet, HashMap을 동기화 시켜 멀티 스레드 환경에서 사용할 수 있게 해보자
+ 		
+ 		
+ 		Collections 클래스의 synchronized컬렉션인터페이스명() 메소드
+ 		
+ 		synchronizedList(List<E> list)		: List를 동기화된 List로 리턴
+ 		synchronizedMap(Map<K, V> map)		: Map을 동기화된 Map으로 리턴
+ 		synchronizedSet(Set<E> set)			: Set을 동기화된 Set으로 리턴
+	
+	
+	□□□□ 동기화 컬렉션으로 변경 □□□□	
+		
+		List<E> myList = Collections.synchronizedList(new ArrayList<E>());
+		
+		Set<E> mySet = Collections.synchronizedSet(new HashSet<E>());
+		
+		Map<K, V> myMap = Collections.synchronizedMap(new HashMap<K,V>());
+	
+	
+	
+
+---------------------------------------------------------------------------------------
+
+	수정 불가 컬렉션
+	
+		- unmodifiable 컬렉션 (수정불가 컬렉션) = immutable 컬렉션 (불변 컬렉션)
+		- 컬렉션의 엘리먼트를 수정할 수 없게 만들고 싶을 때
+		- of()
+		- copyOf()
+		
+		
+	□□□□ List, Set, Map 인터페이스의 of() 정적 메소드로 만들기 □□□□
+	
+		List<E> unmodList = List.of(E e1, E e2, .... E e);
+		Set<E> unmodSet = Set.of(E e1, E e2, ... E e);
+		Map<K, V> unmodMap = Map.of(K k1, V v1, K k2, V v2, ... K k, V v);
+	
+	
+	
+	□□□□ List, Set, Map 인터페이스의 copyOf() 정적 메소드로 기존 컬렉션에서 가져오기 □□□□
+		
+		List<E> unmodList = List.copyOf(myList);
+		Set<E> unmodSet = Set.copyOf(mySet);
+		Map<K, V> unmodMap = Map.copyOf(myMap);
+		
+		
+		
+	□□□□ 배열의 수정불가 성질을 이용하여 배열을 만들고 이를 Arrays.asList() 메소드를 통해 List로 가져오기 □□□□
+		
+		String[] arr = {"A", "B", "C"};
+		List<String> unmodList = Arrays.asList(arr);
+		
 
 
 

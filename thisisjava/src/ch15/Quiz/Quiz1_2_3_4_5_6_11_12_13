@@ -1,0 +1,117 @@
+
+1. 자바의 컬렉션 프레임워크에 대한 설명으로 틀린 것은?
+	- List 컬렉션은 인덱스로 객체를 관리하며 중복 저장을 허용한다
+	- Set 컬렉션은 순서를 유지하지 않으며 중복 저장을 허용하지 않는다
+	- Map 컬렉션은 키와 값으로 구성된 Map.Entry를 저장한다
+	- Stack은 FIFO(FirstInFirstOut) 자료구졸르 구현한 클래스이다 (X)
+	
+		# Stack = FILO (.push(E e) .pop())
+		# Queue = FIFO (.offer(E e) .poll())
+		
+
+2. List 컬렉션에 대한 설명 중 틀린 것은?
+	- 대표적인 구현 클래스로는 ArrayList, Vector, LinkedList가 있다
+	- 멀티 스레드 환경에서는 ArrayList보다는 Vector가 스레드에 안전하다
+	- ArrayList에서 객체를 삭제하면 삭제된 위치는 비어 있게 된다 (X)
+	- 중간 위치에 객체를 빈번히 삽입하거나 제거할 경우 LinkedList를 사용하는 것이 좋다
+	
+	# List 컬렉션. 중복O 순서(idx) O, null 중복 O
+	# ArrayList에서 객체를 삭제하면 하나씩 앞으로 당겨지면서 채워짐
+	# 이 때문에 반복적인 삽입 삭제가 필요하다면 LinkedList 사용하는 것이 좋음
+
+
+
+3. Set 컬렉션에 대한 설명 중 틀린 것은?
+	- 대표적인 구현 클래스로는 HashSet, LinkedHashSet, TreeSet이 있다
+	- Set 컬렉션에서 객체를 하나씩 꺼내오고 싶다면 Iterator를 이용한다
+	- HashSet은 hashCode()와 equals() 메소드를 이용해서 중복된 객체를 판별한다
+	- Set 컬렉션에는 null을 저장할 수 없다 (X)
+	
+	# Set 컬렉션. 중복X 순서X null 하나만 저장가능
+	# 향상된 for문으로 객체를 갖고오거나
+	# mySet.iterator()로 Iterator로 만들고 hasNext() next() 메소드로 갖고옴
+	
+
+
+4. Map 컬렉션에 대한 설명 중 틀린 것은?
+	- 대표적인 구현 클래스로는 HashMap, Hashtable, TreeMap, Properties가 있다
+	- HashMap과 Hashtable은 hashCode()와 equals() 메소드를 이용해서 중복 판별한다
+	- 멀티스레드 환경에서는 Hashtable보다 HashMap이 스레드에 안전하다 (X)
+	- Properties는 키와 값이 모두 String 타입이다
+	
+	# Map<K,V> 키와 값으로 구성된 Entry 저장, 순서X 키중복X 값중복O
+	# Map은 Collection이나 Set으로 저장할 수 있음
+	
+
+
+5. 싱글 스레드 환경에서 Board 객체를 저장 순서에 맞게 읽고 싶다. 가장 적합한 컬렉션을 생성하도록 밑줄 친 부분에 코드를 작성해라
+
+	List<Board> 변수 = new ArrayList<>();
+	-----------			----------------	
+	
+
+6. 싱글 스레드 환경에서 학번(String)을 키, 점수(Integer)를 값으로 저장하는 가장 적합한 컬렉션을 생성하도록 밑줄 친 부분에 코드 작성해라
+
+	Map<String, Integer> 변수 = new HashMap<>();
+	--------------------          -------------
+	
+
+
+11. LIFO, FIFO 컬렉션에 대한 설명으로 틀린 것은?
+	- Stack은 LIFO이고 Queue는 FIFO이다
+	- Stack에 넣는 행위는 push이고 빼는 행위는 pop이다
+	- Queue에 넣는 행위는 offer이고 빼는 행위는 poll이다
+	- Stack과 Queue는 자바에서 클래스 타입이다. (X)
+
+
+	# [인터페이스], 클래스	
+	
+[Collection]
+	
+		- [List] : 순서 O, 중복 O, Null 여러 개 저장 가능
+			- ArrayList
+			- LinkedList
+			- Vector
+				- Stack
+				
+		- [Set] : 순서 X, 중복 X, Null 하나만 저장 가능
+			- HashSet
+			- LinkedHashSet
+			- EnumSet
+			
+			- [SortedSet]
+				- [NavigableSet]
+					- TreeSet
+			
+		- [Queue] : List와 비슷. 순서 O, 중복 O 
+			- PriorityQueue
+			
+			- [Deque]
+				- LinkedList
+				- ArrayDeque
+	
+
+
+12. 동기화된 컬렉션에 대한 설명으로 틀린 것은?
+	- 멀티스레드 환경에서 안전하게 사용할 수 있는 컬렉션이다
+	- 동기화된 컬렉션의 메소드는 synchronized 처리가 되어 있다
+	- Vector와 HashMap은 동기화된 컬렉션이다 (X)
+	- Collections의 synchronizedMap() 메소드는 동기화된 Map을 리턴한다
+	
+	
+	# Collections 클래스의 synchronized컬렉션()로 List, Map, Set 동기화처리 가능
+	
+	
+
+13. 수정할 수 없는 List 컬렉션에 대한 설명으로 틀린 것은?
+	- 요소를 추가, 삭제할 수 없는 List 컬렉션을 말한다
+	- List의 of()메소드는 수정할 수 없는 컬렉션을 생성한다
+	- List의 copyOf() 메소드는 기존 컬렉션을 복사한 뒤 수정할 수 없는 컬렉션을 생성한다
+	- Array.asList() 메소드는 배열로부터 수정할 수 있는 List 컬렉션을 생성한다 (X)
+	
+	
+	# Array아니고 Arrays.asList()임. unmodified(immutable) List 컬렉션을 생성
+	
+	
+	
+	
