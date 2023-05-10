@@ -1,0 +1,396 @@
+
+람다식 종류
+	- 매개변수 유무, 리턴값 유무
+	- 메소드를 참조하는 람다식
+	- 생성자 참조하는 람다식
+
+--------------------------------------------------
+
+함수형 프로그래밍
+	- 함수(=실행 가능 코드 묶음) 정의 한 후 데이터만 갖고있는 데이터 처리부로 보낸 후 처리부에서 함수 사용.
+	- 다형성 (같은 데이터라도 정의된 함수에 따라 처리 결과가 다름)
+	
+	# 함수와 메소드의 차이점
+		함수 = 실행 가능 코드 묶음 (단독 단순 실행 코드)
+		메소드 = 객체안에서 객체의 기능 정의 (Class 또는 Object 안에서 정의되어야 함)
+		
+	# 자바는 모두 메소드 (=객체지향)
+	# JS는 함수와 메소드 모두 존재
+	
+
+함수형 인터페이스
+	- 인터페이스에 추상메소드([public abstract] 리턴타입 메소드명();)가 하나만 있을 때
+	- default, private 메소드, 상수필드([public static final 타입 변수명 = ;])의 개수와는 상관없음
+	- @FunctionalInterface 어노테이션 없어도 자동 컴파일 됨, 명확하게 써주는 게 좋긴 함
+	
+
+자바의 람다식 (=익명함수)
+	- Java 8 부터 지원
+	- 인터페이스의 추상메소드를 익명으로 사용하는 방식
+	- 익명구현객체로 자동 컴파일 됨
+	- 구현될 인터페이스에는 추상메소드가 하나(=함수형 인터페이스)여야 람다식으로 변환 가능, @FunctionalInterface
+	- 람다식 안의 지역변수는 자동 final 속성
+	
+	- 장점
+		- 간결한 코드
+		- 가독성
+		- 익명구현객체를 프로그래머가 만들지 않고 여러 함수 사용가능(생산성, 다형성)
+		- 병렬프로그래밍 용이
+	
+	- 단점
+		- 익명함수 재사용 불가
+		- 디버깅 난이도
+		- 재귀 부적합
+	
+
+
+	■■■■ 람다식 정의 ■■■■
+		
+		람다식 : (매개변수,...) -> {
+			처리내용
+		}
+		
+	
+	
+		
+	■■■■ 사용자 정의 인터페이스 Calculable 사용하기 ■■■■
+	
+	@FunctionalInterface
+	public interface Calculable(){
+		
+		//추상메소드
+		void calculate(int x, int y);
+	}
+	
+	-----------------
+	
+	Calculable myCal = new Calculable() {
+		@Override
+		public void calculate(int x, int y) {
+			int result = x + y;
+			System.out.println(result);
+		}
+	};
+	
+	
+	myCal.calculate(10, 4);
+	myCal.calculate(5, 20);
+	
+	----------------
+	
+	
+	
+	
+
+	■■■■ 인터페이스 추상메소드 재정의 및 구현객체생성 없이 
+	action() 메소드로 데이터 처리할 때 람다식 사용하기 ■■■■
+	
+	public void action(Calculable cal){
+		int x = 10;
+		int y = 4;
+		cal.calculate(x, y);
+	}
+	
+	----------------
+	
+	action ((x,y) -> {
+		int result x + y;
+		System.out.println(result);
+	});
+	
+	action( (x,y) -> {
+		int result x - y;
+		System.out.println(result);
+	});
+	
+	
+	
+
+------------------------------------------------------------------------
+
+	매개변수 없는 람다식
+		- @FunctionalInterface의 추상메소드에 매개변수가 없을 경우 사용가능
+		
+		# 실행문 한줄이면 {}없이 작성 가능
+		
+	■■■■ 매개변수 없는 람다식 작성 ■■■■
+	
+		() -> {
+			// 하나 이상 실행문
+		}
+		
+		또는
+		
+		() -> //단일 실행문
+	
+	
+
+-------------------------------------------------------------------------
+	
+	매개변수 있는 람다식
+		- @FunctionalInterface의 추상메소드에 매개변수가 있을 경우 사용가능
+		- 매개변수 타입을 적어도 되고 안 적어도 되고 var로 써도 됨. 일반적으로 적지 않음.
+		- 매개변수 이름은 중요하지 않고 개수만 맞으면 됨
+		
+		# 실행문 한줄이면 {}없이 작성 가능
+		# 매개변수 하나면 ()없이 작성 가능, ()없을 때는 타입이나 var 안 쓰고 매개변수만 작성
+		
+		
+	■■■■ 매개변수 람다식 작성 ■■■■
+
+		(타입 매개변수, 타입... 타입...) ->{
+			//실행문
+		}
+		
+		또는
+		
+		(var 매개변수, var... var...) ->{
+			//실행문
+		}
+		
+		또는
+		
+		(매개변수,...) -> {
+			//실행문
+		}
+		
+		
+		또는
+		
+		매개변수 1개 -> {
+			//실행문
+		}
+		
+		또는
+		
+		매개변수 1개 -> //실행문
+		
+		
+-----------------------------------------------------------------------
+
+	리턴값이 있는 람다식
+
+		- 함수형 인터페이스의 추상메소드에 리턴값이 있을 경우에 사용
+		- 실행문 없이 값만 리턴할 때는 {}, return 없이 값만 적음
+		
+		
+		
+	■■■■ 리턴값 있는 람다식 작성 ■■■■
+	
+		함수형 인터페이스
+		
+		@FunctionalInterface
+		public interface 인터페이스명 {
+			리턴타입 calc(double x, double y);
+		}
+		-------------
+		
+		(매개변수, 매개변수) -> {
+			실행문...
+			return 값
+		}
+		
+		또는
+		
+		(매개변수, 매개변수) -> 값
+		
+	
+-------------------------------------------------------------------------------------
+
+	참조
+		- 매개값만 전달하는(참조) 람다식을 '::' 간단한 표현으로 줄이는 방법
+		
+	종류
+		- 메소드 참조
+			- 정적 메소드, 인스턴스 메소드 참조
+			- 매개변수의 메소드 참조
+		- 생성자 참조
+		
+	
+	
+	메소드 참조
+		- 함수형 인터페이스의 추상메소드를 어떤 정의되어있는 메소드(정적,인스턴스)를 참조하여 작성하고 싶을 때
+		
+		# 참조하고 싶은 메소드의 리턴타입, 매개변수 타입, 매개변수 개수는 인터페이스의 추상메소드와 같아야 함
+		
+		
+		클래스 :: 정적 메소드
+		
+		객체참조변수 :: 인스턴스 메소드
+		
+		
+	■■■■ 메소드 참조 람다식 작성 방법 ■■■■
+	
+		함수형 인터페이스
+		
+		@FunctionalInterface
+		public interface Calculable {
+			public double calc(double x, double y);
+		}	
+		
+		-------------
+		
+		인터페이스를 매개변수로 하는 메소드를 갖는 클래스
+		
+		public class Person {
+	
+			public void action(Calculable calculable) {
+				double result = calculable.calc(10, 4);
+				System.out.println("결과 : " + result);
+			}
+
+		}
+		
+		---------------
+		
+		함수형 인터페이스의 추상메소드에서 참조하고싶은 메소드를 갖는 클래스
+		
+		public class Computer {
+
+			public static double staticMethod(double x, double y) {
+				return x + y;
+			}
+	
+	
+			public double instanceMethod(double x, double y) {
+				return x - y;
+			}
+		}
+		
+		----------------
+		
+		메인함수 람다식 작성
+		
+		public static void main(String[] args) {
+		
+			Person myPerson = new Person();
+			
+			// 람다식1
+			myPerson.action((x,y) -> Computer.staticMethod(x, y));
+			
+			// 람다식1 참조로 간단히
+			myPerson.action(Computer :: staticMethod);
+		
+			//////////////////////////////////////
+			Computer myCom = new Computer();
+			
+			// 람다식2
+			myPerson.action((x,y)-> myCom.instanceMethod(x, y));
+			
+			// 람다식2 참조로 간단히
+			myPerson.action(myCom :: instanceMethod);
+
+		}
+	
+
+-----------------------------------------------------------------
+
+	매개변수의 메소드 참조
+	
+		- 인스턴스메소드를 갖고있는 클래스의객체와 그 메소드의 매개값을 매개변수로 갖는 람다식은 (클래스 :: 인스턴스메소드)로 작성 가능
+		
+		//람다식
+		(클래스객체, 매개값) -> 클래스객체.인스턴스메소드(매개값)
+		
+		//람다식 참조로 간단하게 하기
+		클래스 :: 인스턴스메소드
+
+
+	■■■■ 매개변수 참조 람다식 작성 방법 ■■■■
+	
+	함수형 인터페이스
+	
+	@FunctionalInterface
+	public interface Comparable {
+		public abstract int compare(String a, String b);
+	}
+	
+	-------------------------
+	
+	함수형 인터페이스를 매개변수로 하는 메소드를 가진 클래스
+	
+	public class Person {
+	
+		public void ordering(Comparable comparable) {
+			String a = "홍길동";
+			String b = "김길동";
+		
+			int result = comparable.compare(a, b);
+		
+			if(result < 0) {
+				System.out.println(a+"는 " + b+"보다 앞에 옵니다" );	
+			}else if(result == 0) {
+				System.out.println(a+"는 " + b+"와 같습니다" );
+			}else {
+				System.out.println(a+"는 " + b+"보다 뒤에 옵니다" );
+			}
+		}
+	
+	}
+
+	----------------------------
+	
+	메인 함수. 익명구현객체, 람다식, 참조 람다식으로 간단하게 하기
+	
+	
+	public static void main(String[] args) {
+		
+		Person myPerson = new Person();
+		
+		// 기존 인터페이스 익명구현객체 만들어서 사용하기
+		
+		myPerson.ordering(new Comparable() {
+			@Override
+			public int compare(String a, String b) {
+				return a.compareToIgnoreCase(b);
+			}
+		});
+		System.out.println("\n");
+		
+		
+		
+		// 람다식으로 간단히 하기
+		
+		myPerson.ordering((a,b)->{
+			return a.compareToIgnoreCase(b);
+		});
+		System.out.println("\n");
+		
+		
+		
+		// 람다식 참조형태로 더 간단히 (6줄이 4줄로 4줄이 1줄로 간단하게 됨 ㅁㅊ)
+		
+		myPerson.ordering(String :: compareToIgnoreCase);
+
+	}
+	
+	------------------------------
+
+		
+		# 참고
+		
+			String 클래스의 두 문자열 비교 인스턴스 메소드
+			
+			문자열1.compareTo(문자열2); // 문자열1이 문자열2보다 앞이면 음수, 같으면 0 뒤에 있으면 양수. 대소문자 구분. 사전 순서로 음수 0 양수
+			문자열1.compareToIgnoreCase(문자열2); // 문자열1이 문자열2보다 앞이면 음수, 같으면 0 뒤에 있으면 양수. 대소문자 구분 안 함. 사전 순서로 음수 0 양수
+
+----------------------------------------------------------------------
+
+	생성자 참조
+	
+		- 매개변수로 객체만 생성하여 리턴하는 경우에 사용가능
+		
+		// 객체생성하여 리턴하는 람다식
+		(a, b) -> { return new 클래스(a,b); }
+		
+		// 생성자 참조 람다식
+		클래스 :: new
+	
+
+
+
+
+
+
+
+	
