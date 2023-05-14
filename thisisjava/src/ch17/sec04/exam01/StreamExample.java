@@ -18,7 +18,13 @@ public class StreamExample {
 		}
 		
 		Stream<Product> myStream = myList.stream();
-		myStream.forEach(prod -> System.out.println(prod));
+		myStream.forEach((Product prod) -> {System.out.println(prod);});
+		
+		System.out.println();
+		
+		//람다식 간단하게
+		Stream<Product> myStream1 = myList.stream();
+		myStream1.forEach(prod -> System.out.println(prod));
 
 	}
 
