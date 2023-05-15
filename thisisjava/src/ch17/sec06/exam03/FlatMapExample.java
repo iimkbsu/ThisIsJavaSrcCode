@@ -31,7 +31,17 @@ public class FlatMapExample {
 		
 		list.stream().flatMap(num -> Arrays.stream(num.split(","))).forEach(num -> System.out.println(num));
 		
+		System.out.println();
 		
+		
+		list.stream().flatMapToInt(num -> {
+			String[] strArr = num.split(",");
+			int[] intArr = new int[strArr.length];
+			for(int i=0; i<intArr.length; i++) {
+				intArr[i] = Integer.parseInt(strArr[i].trim());
+			}
+			return Arrays.stream(intArr);
+		}).forEach(numb -> System.out.println(numb));
 		
 	}
 
