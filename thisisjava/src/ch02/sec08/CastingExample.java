@@ -19,6 +19,10 @@ public class CastingExample {
 		int i_var4 = (int)d_var;
 		System.out.println(i_var4);
 		
+		long l_var1 = 10020302;
+		int i_var5 = (int)l_var1;
+		System.out.println(i_var5);
+		
 
 	}
 
