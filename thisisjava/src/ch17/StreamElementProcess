@@ -451,6 +451,7 @@
 	
 		- (중간처리) 스트림.peek(Consumer action).최종처리		: 리턴 Stream<T> 또는 IntStream 또는 DoubleStream	: 뒤아 반드시 최종처리 있어야 함
 		- (최종처리) 스트림.forEach(Consumer action)			: 리턴 없음 (void)
+			# 컬렉션.forEach(Consumer action)와 큰 차이가 없지만 스트림 객체 생성 유무의 차이
 		
 			
 			Consumer 인터페이스 종류 
@@ -461,7 +462,6 @@
 			# 함수형 인터페이스 DoubleConsumer	: 추상 메소드 void accept(double v)			: double타입 매개값 v를 받아 소비
 			
 				# 람다식으로 작성 가능
-				
 				.peek(n -> System.out.println(n)).최종처리;
 				.forEach(n -> System.out.println(n));
 	
@@ -632,7 +632,7 @@
 		}
 		catch(Exception e) {
 			int sum3 = 0;
-		}
+		} 
 		
 		
 		//방법4
@@ -643,7 +643,10 @@
 --------------------------------------------------
 
 	
-	요소 수집 (필터링, 매핑 후 필요한 요소만 컬렉션에 담기, 최종처리)
+	요소 수집 
+	
+		- 스트림에서 필터링, 매핑 후 필요한 요소만 컬렉션에 담기
+		- 최종처리
 	
 		□□□□ collect() 메소드 □□□□
 		
@@ -653,9 +656,77 @@
 			
 			
 
-------------------------------------------------------
-
 	요소 그룹핑
+	
+		- collect() 메소드는 요소 수집 기능 이외에 컬렉션 요소들을 그룹핑하여 Map 객체 생성 기능도 제공
+		- 예를들어 남,여로 성별이 나눠진 리스트가 있을 때 남,여를 키로 하고 List<Student>를 값으로 하는 맵을 만들 수 있음
+		
+		- stdlist.stream().collect(Collectors.groupingBy( Map에서 키로 지정할 객체 리턴하는 람다식 ));  //리턴은 Map(키, list<T>)
+		
+		
+	■■■■ 학생 리스트에서 남여를 키, List<Student>를 값으로 하는 Map을 그루핑하여 만들기 ■■■■
+		
+		List<Student> stdList = new ArrayList<>();
+		stdList.add("김개똥", "남", 30);
+		stdList.add("김계란", "여", 26);
+		
+		Map<String, List<Student>> stdMap = stdList.stream().collect(Collectors.groupingBy(std -> std.getSex());
+		
+		List<Student> maleList = stdMap.get("남"); //키가 "남"인 값(= 여기서는 List<Student>) 리턴
+		
+		List<Student> femaleList = stdMap.get("여"); //키가 "여"인 값
+
+
+	□□□□ groupingBy에 두 번째 매개변수로 올 수 있는 메소드 □□□□
+	
+	Collecotrs.groupingBy(키 람다식, Collectors.메소드())
+	
+		- mapping(Function, Collector)
+		
+		- averagingDouble(ToDoubleFunction)
+		
+		- counting()
+		
+		- maxBy(Comparator)
+		- minBy(Comparator)
+		
+		- reducing(BinaryOperator<T>)
+		- reducing(T identity, BinaryOperator<T>)
+		
+	
+	
+
+	■■■■ collect(Collectors.groupingBy(키 람다식, Collectors.메소드())); ■■■■
+
+	Map<String, Double> stdMap = stdList.stream().collect( Collectors.groupingBy( std -> std.getSex(), Collectors.averageingDouble(std -> std.getScore())));
+	
+
+---------------------------------------------------------------------
+
+	요소 병렬처리
+
+		- 스트림에 요소가 너무 많을 경우 이를 하나의 스트림에서 처리하기에 벅참
+		- 빠른 처리를 위해 여러 스트림으로 병렬처리
+		
+		- 동시성
+			- 하나의 코어에서 작업1,2,3...을 순간순간 번갈아가며 처리
+		- 병렬성
+			- 여러 코어에서 작업1, 작업2 하나씩 분담하여 각각 처리
+
+			# 데이터 병렬성
+				- 하나의 큰 데이터를 서브데이터셋으로 분할하고 이를 병렬처리 함
+			# 작업 병렬성
+				- 서로 다른 작업을 여러 코어(스레드)로 병렬처리 함
+				
+	
+	포크조인 프레임워크
+	
+		- 자바는 병렬 스트림에서 요소들 병렬 처리하기 위해 포크조인 프레임워크를 사용함 (포크조인 프레임워크에서는 스레드풀 사용)
+		- 병렬 가능 작업을 재귀적으로 작은 작업으로 분할(포크) 한 후 서브테스크 각각의 결과를 합쳐 전체 결과로 조인하도록 설계되어있음
+
+
+
+	병렬 스트림 사용
 	
 		- 
 
@@ -663,5 +734,8 @@
 
 
 
+
+	
+	
 	
 	
