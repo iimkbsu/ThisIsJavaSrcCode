@@ -27,6 +27,7 @@ public class ParallelExample {
 		long time = 0;
 		
 		
+		
 		//일반 스트림으로 처리
 		Stream<Integer> myStream = scores.stream();
 		startTime = System.nanoTime();
