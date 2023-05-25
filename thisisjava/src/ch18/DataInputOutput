@@ -1,0 +1,230 @@
+
+ 데이터 입출력
+	1. 입출력 스트림
+	2. 바이트 출력 스트림
+	3. 바이트 입력 스트림
+	4. 문자 입출력 스트림
+	5. 보조 스트림
+	6. 문자 변환 스트림
+	7. 성능 향상 스트림
+	8. 기본 타입 스트림
+	9. 프리트 스트림
+	10. 객체 스트림
+	11. File과 Files 클래스
+	
+	
+-------------------------------------------
+
+	1. 입출력 스트림
+	
+		- 출발지 → 프로그램 → 도착지
+		- 출발지(키보드, 파일, 프로그램)에서 프로그램으로 입력 스트림을 통해 데이터가 이동
+		- 프로그램에서 도착지(모니터, 파일, 프로그램)로 출력 스트림을 통해 데이터가 이동
+		
+		- 스트림 종류
+			- 바이트 스트림 : 그림, 멀티미디어, 문자 등 모든 종류의 데이터를 입출력할 때 사용
+				- InputStream (최상위클래스)
+					- XxxInputStream (하위클래스)
+				- OutputStream (최상위클래스)
+					- XxxOutputStream (하위클래스)
+				
+			- 문자 스트림 : 문자만 입출력할 때 사용 (실제로는 바이트로 흘러감)
+				- Reader (최상위클래스)
+					- XxxReader (하위클래스)
+				- Writer (최상위클래스)
+					- XxxWriter (하위클래스)
+		
+		
+		□□□□ 텍스트 File 데이터를 스트림으로 입출력 할 때 □□□□
+		
+			FileInputStream → 프로그램 → FileOutputStream
+				# 문자 데이터를 바이트화 해주는 작업 필요
+			
+			또는
+			
+			FileReader → 프로그램 → FileWirter
+				# 문자 바로 사용 가능
+		
+		
+----------------------------
+		
+	2. 바이트 출력 스트림
+	
+		OutputStream (최상, 추상 클래스)
+			- FileOutputStream (자식)
+			- PrintStream (자식)
+			- BufferedOutputStream (자식)
+			- DataOutputStream (자식)
+			
+		
+		□□□□ OutputStream 메소드 □□□□
+		
+			void write(정수)					: 정수(4byte)중 끝 1byte만 출력
+			void write(byte[])				: 매개값 바이트배열 모두 출력
+			void write(byte[], 시작인덱스, 개수)	: byte[] 시작인덱스 부터 개수만큼 바이트 출력
+			
+			void flush()					: 출력버퍼에 잔류하는 모든 바이트 출력
+			
+			void close()					: 자동 flush() 후 출력 스트림 닫고 메모리 해제
+			
+			
+			# -128 ~ 127는 그대로 바이트로 출력
+			# 범위 미만/초과 정수는 잘려서 출력됨
+
+		
+	■■■■ FileOutputStream으로 바이트 DB에 write(정수)출력하여 저장하기 ■■■■
+		
+		try{
+			OutputStream os = new FileOutputStream("C:/ThisIsJavaTemp/test1.db");
+			
+			byte a = 10;
+			byte b = 20;
+			byte c = 30;
+			byte d = 127;
+			byte e = 128;
+			
+			os.write(a);	// == os.write(10);
+			os.write(b);	// == os.write(20);
+			os.write(c);	// == os.wirte(30);
+			os.write(d);	// == os.write(127);
+			os.wirte(e);	// != os.write(128);
+			
+			os.flush();
+			[os.close();]	// 별로 좋은 위치는 아니지만 FileOutputStream이 AutoCloseable 구현객체이므로 현재위치에 사용해도 됨
+		}
+		catch(Exception e){
+			e.printStackTrace();
+		}
+		[finally{
+			try{
+				os.close()
+			}catch(IOException e){}
+		}]	
+		// 예외발생해도 무조건 close() 호출하게끔 하는 게 좋긴 함, 단 OutputStream을 블럭 밖에 선언해줘야 함
+		
+		
+			# XxxOutputStream은 AutoCloseable 인터페이스를 구현하고 있으므로 
+				try{}catch(예외){예외처리}finally{os.close()} 안 해줘도 됨
+		
+	
+	
+------------------------------
+
+	3. 바이트 입력 스트림
+	
+		- InputStream (최상, 추상)
+			- FileInputStream (자식)
+			- BufferedInputStream (자식)
+			- DataInputStream (자식)
+		
+		
+		
+		□□□□ InputStream 메소드 □□□□
+		
+			int read()			: 1byte를 읽은 후 바이트를 정수형 바꿔 리턴, 읽을 데이터가 없으면 -1 리턴
+			int read(byte[])	: 읽은 바이트를 매개값으로 주어진 바이트 배열에 저장 후 읽은 바이트 개수 리턴, 읽을 데이터가 없으면 -1 리턴
+			close()				: 입력 스트림 종료
+		
+		
+		
+		■■■■ InputStream으로 바이트 읽어오기 ■■■■
+		
+			try{
+				InputStream is = new FileInputStream("경로");
+				
+				while(true){
+				int data = is.read();
+				if(is.read() == -1) break;
+				System.out.println(data);
+				}
+				
+				is.close();
+			}catch(FileNotFoundException e){
+				e.printStackTrace();
+			}catch(IOException e){
+				e.printStackTrace();
+			}
+		
+		
+		■■■■ InputStream으로 바이트 배열 읽어오기 ■■■■
+		
+			try{
+				InputStream is = new FileInputStream("경로");
+				
+				byte[] data = new byte[100];
+				
+				while(true){
+					int num = is.read(data);
+					if(num == -1) break;
+					
+					for(int i=0; i<num; i++){
+						System.out.println(data[i]);
+					}
+				}
+				
+				is.close();
+			}catch(Exception e){
+				e.printStackTrace();
+			}
+		
+		
+		-------------------------
+		방법2. FileInputStream은 AutoCloseable 인터페이스를 상속하고있으므로 이럴때는 try(객체생성;){}catch(){}문을 사용하여 close()메소드 없이 쓸 수 있음
+		
+			try(InputStream is = FileInputStream("경로");) {
+			
+				byte[] data = new byte[100];
+				
+				while(true) {
+					int num = is.read(data);
+					if(num == -1) break;
+					
+					for(int i=0; i<num; i++) {
+						System.out.println(data[i]);
+					}
+				}
+			}catch(IOException e) {
+				e.printStackTrace();
+			}
+		
+		
+		
+		
+		
+		■■■■ InputStream, OutputStream 으로 JPEG 파일을 test2.jpg 이름 변경한 후 C:/ThisIsJavaTemp 에 저장하기 ■■■■
+		
+			String originalFileName = "C:/ThisIsJavaTemp/test.jpg";
+			String copyFileName = "C:/ThisIsJavaTemp/test2.jpg";
+		
+			try (InputStream is = new FileInputStream(originalFileName); OutputStream os = new FileOutputStream(copyFileName);) {
+			
+				byte[] data = new byte[1024];
+				
+				while(true) {
+					int num = is.read(data);
+					if(num == -1) {
+						break;
+					}
+					os.write(data, 0, num);
+				}
+			
+				os.flush();
+
+				System.out.println("복사가 잘 되었습니다");
+			
+			}catch(Exception e) {
+			
+			}
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
