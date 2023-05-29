@@ -413,7 +413,7 @@
 			sorted(Comparator<T>)	: 정렬된 Stream<T> 리턴
 				
 				오름차순 정렬 : Comparable 인터페이스 구현 클래스 만들고 compareTo(객체){.compare(a,b)} 재정의 후 이를 리스트객체 후 스트림으로 받아 sorted() 호출
-				내림차순 정렬 : 스트림.sorted(Comparator.reverseOrder());  //import java.util.Comparator;
+				내림차순 정렬 : 스트림.sorted(Comparator.reverseOrder());  //import java.util.Comparator; //기본타입X 객체타입만 가능, 기본타입.boxed() 한 후 사용가능
 				# -1 0 1 리턴
 				
 			Comparator을 이용하여 정렬하기
