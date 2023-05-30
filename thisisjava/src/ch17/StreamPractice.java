@@ -11,7 +11,6 @@ import java.util.Comparator;
 import java.util.Set;
 import java.util.HashSet;
 
-
 import java.util.Map.Entry;
 
 
@@ -27,8 +26,35 @@ import java.util.Iterator;
 
 import java.util.Random;
 
-public class StreamPractice {
 
+
+public class StreamPractice {
+	
+	
+	public static class Student {
+		
+		private String name;
+		private int score;
+		
+		public Student(String name, int score) {
+			this.name = name;
+			this.score = score;
+		}
+		
+		public String getName() {
+			return name;
+		}
+		
+		public int getScore() {
+			return score;
+		}
+		
+	}
+
+	
+	
+	
+	
 	public static void main(String[] args) {
 		
 		int[] intArr = new int[] {1,2,3,4,5,5,5};
@@ -173,7 +199,34 @@ public class StreamPractice {
 			return Arrays.stream(intArr2);
 		}).forEach(num -> System.out.print(num + " "));
 		
+		System.out.println();
+		
+		List<Student> stdList = Arrays.asList(
+				new Student("홍길동", 21),
+				new Student("신용권", 12),
+				new Student("유미선", 35)
+				);
+		
+		stdList.stream().sorted((std1, std2) -> Integer.compare(std1.getScore(), std2.getScore()))
+		.forEach(std -> System.out.print(std.getName() + " : " + std.getScore() + "   "));
+		
+		System.out.println();
+		
+		stdList.stream().sorted((std1, std2) -> Integer.compare(std2.getScore(), std1.getScore()))
+		.forEach(std -> System.out.print(std.getName() + " : " + std.getScore() + "   "));
+
+
+		System.out.println();
+		
+		double avg = stdList.stream().sorted((std1, std2) -> Integer.compare(std1.getScore(), std2.getScore())).peek(std -> System.out.print(std.getScore() + " "))
+		.mapToInt(std -> std.getScore()).average().getAsDouble();
+		System.out.printf("\n점수 평균 : %.2f", avg);
+		
+		
 		
 	}
-
+	
+	
 }
+
+
