@@ -1,5 +1,11 @@
 package ch17;
 
+
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.charset.Charset;
+
 import java.util.Arrays;
 import java.util.stream.Stream;
 import java.util.stream.IntStream;
@@ -55,7 +61,7 @@ public class StreamPractice {
 	
 	
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception {
 		
 		int[] intArr = new int[] {1,2,3,4,5,5,5};
 		
@@ -221,6 +227,28 @@ public class StreamPractice {
 		double avg = stdList.stream().sorted((std1, std2) -> Integer.compare(std1.getScore(), std2.getScore())).peek(std -> System.out.print(std.getScore() + " "))
 		.mapToInt(std -> std.getScore()).average().getAsDouble();
 		System.out.printf("\n점수 평균 : %.2f", avg);
+		
+		try {
+			System.out.println();
+			Path path = Paths.get(StreamPractice.class.getResource("data.txt").toURI());
+			Stream<String> fileStream = Files.lines(path, Charset.defaultCharset());
+			fileStream.forEach(line -> System.out.println(line));
+			fileStream.close();
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+		
+		
+		boolean evenNum = Arrays.stream(intArr).filter(num ->{
+			if(num%2==0) {
+				return true;
+			}else return false;
+		}).peek(even -> System.out.print(even + " ")).allMatch(numE -> numE%2==0);
+		System.out.println("\n짝수 필터링해서 스트림에 모두 짝수? : " + evenNum);
+		
+		Path filePath = Paths.get(StreamPractice.class.getResource("data.txt").toURI());
+		Stream<String> fileStream = Files.lines(filePath, Charset.defaultCharset());
+		
 		
 		
 		
