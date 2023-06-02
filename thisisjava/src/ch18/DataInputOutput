@@ -79,7 +79,7 @@
 			
 			byte a = 10;
 			byte b = 20;
-			byte c = 30;
+			byte c = 30; 
 			byte d = 127;
 			byte e = 128;
 			
@@ -244,7 +244,7 @@
 			void close()						: 스트림 닫고 메모리에서 해제
 		
 		
------------------		
+	
 		
 	문자 입력 스트림 (Reader)
 	
@@ -257,22 +257,100 @@
 		□□□□ Reader 메소드 □□□□
 		
 			int read()				: 문자 읽고 문자를 유니코드(정수)로 리턴, 읽을 문자 데이터 없으면 -1 리턴
-			int read(char[] ch)		: 문자 배열에 읽은 문자들을 저장한 후 저장한 문자 수 리턴
+			int read(char[] ch)		: 문자 배열에 읽은 문자들을 저장한 후 저장한 문자 수 리턴, 읽을 문자 데이터 없으면 -1 리턴
 			close()					: 스트림 닫고 메모리에서 해제
 		
 
+---------------------------------------------------------------
+
+	5. 보조 스트림
+	
+		- 입력스트림 → (보조스트림) → 프로그램 → (보조스트림) → 출력스트림
+		- 스트림 사이에 연결하여 보조 기능을 사용할 수 있게, 성능을 향상 하는 스트림
+			- 기능
+				- 바이트 스트림을 문자 스트림으로 변환
+				- 입출력 성능 향상
+				- 기본 타입 데이터 입출력
+				- 줄바꿈 처리 및 형식화된 문자열 출력
+				- 객체 입출력
+		
+		- 보조스트림1 변수 = new 보조스트림1(입출력스트림);
+		
+		- 보조스트림은 체인 구성 가능
+		- 보조스트림2 변수 = new 보조스트림2(보조스트림1);
+
+
+	
+		□□□□ 자주 사용되는 보조 스트림 종류 □□□□	
+
+			InputStreamReader			: 바이트 스트림을 문자 스트림으로 변환
+			
+			BufferedInputStream			: 입출력 성능 향상
+			BufferedOutputStream		: 입출력 성능 향상
+			BufferedReader				: 입출력 성능 향상
+			BufferedWriter				: 입출력 성능 향상
+			
+			DataInputStream				: 기본 타입 데이터 입력
+			DataOutputStream			: 기본 타입 데이터 출력
+			
+			PrintStream					: 줄바꿈 처리 및 형식화된 문자열 출력
+			PrintWriter					: 줄바꿈 처리 및 형식화된 문자열 출력
+			
+			ObjectInputStream			: 객체 입력
+			ObjectOutputStream			: 객체 출력
 
 
 
+		사용 방법
+		
+			보조스트림 한 개
+			
+			InputStream is = new FileInputStream("C:/.....");
+			InputStreamReader isReader = new InputStreamReader(is);
+			
+			
+			보조스트림 두 개를 체인연결
+			
+			InputStream is = new FileStream("C:/...");
+			InputStreamReader isReader= new InputStreamReader(is);
+			BufferedReader br = new BufferedReader(isReader);
+			
 
+-------------------------------------------------------------------------------
 
+	6. 문자 변환 스트림
+	
+		- InputStream → Reader로 변환
+			- 바이트 스트림 → 문자 입력 스트림
+			- 보조스트림 InputStreamReader 사용
+			
+			사용방법
+			
+			InputStream is = new FileInputStream("C:/경로");
+			Reader rd = new InputStreamReader(is);
 
+			# FileReader가 내부적으로 위의 변환 스트림을 갖고있음
+			
+			
+		
+		- OutputStream → Writer로 변환
+			- 바이트 스트림 → 문자 출력 스트림
+			- 보조스트림 OutputStreamWriter 사용
+			
+			사용방법
+			
+			OutputStream os = new FileOutputStream("C:/경로");
+			Writer wt = new OutputStreamWriter(os);
+			
+			# FileWriter가 내부적으로 위의 변환 스트림 갖고있음
+	
+		
+------------------------------------------------------------------------------------
 
-
-
-
-
-
+	7. 성능 향상 스트림		
+		
+			
+			
 
 
 
