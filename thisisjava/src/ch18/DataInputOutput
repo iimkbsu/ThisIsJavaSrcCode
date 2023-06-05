@@ -4,12 +4,14 @@
 	2. 바이트 출력 스트림
 	3. 바이트 입력 스트림
 	4. 문자 입출력 스트림
+	
 	5. 보조 스트림
-	6. 문자 변환 스트림
-	7. 성능 향상 스트림
-	8. 기본 타입 스트림
-	9. 프리트 스트림
-	10. 객체 스트림
+	6. 문자 변환 스트림 (보조스트림)
+	7. 성능 향상 스트림 (보조스트림)
+	8. 기본 타입 스트림 (보조스트림)
+	9. 프린트 스트림 (보조스트림)
+	10. 객체 스트림 (보조스트림)
+	
 	11. File과 Files 클래스
 	
 	
@@ -284,6 +286,7 @@
 		□□□□ 자주 사용되는 보조 스트림 종류 □□□□	
 
 			InputStreamReader			: 바이트 스트림을 문자 스트림으로 변환
+			OutputStreamWriter			: 바이트 스트림을 문자 스트림으로 변환
 			
 			BufferedInputStream			: 입출력 성능 향상
 			BufferedOutputStream		: 입출력 성능 향상
@@ -318,7 +321,7 @@
 
 -------------------------------------------------------------------------------
 
-	6. 문자 변환 스트림
+	6. 문자 변환 스트림 (보조 스트림)
 	
 		- InputStream → Reader로 변환
 			- 바이트 스트림 → 문자 입력 스트림
@@ -347,10 +350,29 @@
 		
 ------------------------------------------------------------------------------------
 
-	7. 성능 향상 스트림		
+	7. 성능 향상 스트림 (보조 스트림)		
+		
+		- 네트워크, DB, 저장공간과 프로그램 사이에 메모리 버퍼를 사용하여 통신 횟수를 줄여 성능을 향상시킴 (읽고 쓰는 데에 매우 빨라짐)
+		- 특히 문자입력 스트림 Reader에 BufferedReader을 연결하면 성능향상 + readLine() 메소드를 사용할 수 있음
+			- readeLine() 메소드 : 파일의 문자열을 행 단위로 읽어옴
+	
+	
+			BufferedInputStream			: 바이트 입출력 성능 향상
+			BufferedOutputStream		: 바이트 입출력 성능 향상
+			
+			BufferedReader				: 문자 입출력 성능 향상
+			BufferedWriter				: 문자 입출력 성능 향상
+			
 		
 			
+		■■■■ Buffered 스트림 사용하기 ■■■■
+		
+			BufferedInputStream bis = new BufferedInputStream(바이트 입력 스트림);
+			BufferedOutputStrema bos = new BufferedOutputStream(바이트 출력 스트림);
 			
+			BufferedReader br = new BufferedReader(문자 입력 스트림);
+			BufferedWriter bw = new BufferedWriter(문자 출력 스트림);
+
 
 
 

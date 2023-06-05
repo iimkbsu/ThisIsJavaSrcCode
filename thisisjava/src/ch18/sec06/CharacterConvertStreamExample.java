@@ -1,5 +1,6 @@
 package ch18.sec06;
 
+import java.io.IOException;
 import java.io.OutputStream;
 import java.io.FileOutputStream;
 
@@ -15,33 +16,54 @@ import java.io.Reader;
 
 public class CharacterConvertStreamExample {
 
-	public static void main(String[] args) throws Exception {
-		write("문자 변환 스트림을 사용합니다.");
+	public static void main(String[] args) {
+		
+		write("입출력스트림을 문자변환스트림을 사용하여 문자스트림으로 변환합니다.");
+		
 		String data = read();
 		System.out.println(data);
 		
 	}
 	
-	public static void write(String str) throws Exception {
+	public static void write(String str) {
 		
-		OutputStream os = new FileOutputStream("C:/ThisIsJavaTemp/test.txt");
-		Writer writer = new OutputStreamWriter(os, "UTF-8");
-		writer.write(str);
-		writer.flush();
-		writer.close();
+		try {
+			OutputStream os = new FileOutputStream("C:/ThisIsJavaTemp/test.txt");
+			Writer writer = new OutputStreamWriter(os);
+			writer.write(str);
+			writer.flush();
+			
+			os.close();
+			writer.close();
+			
+			
+		}catch(IOException e) {
+			e.printStackTrace();
+		}
+		
+		
 	}
 	
-	
-	
-	public static String read() throws Exception {
+
+	public static String read() {
 		
-		InputStream is = new FileInputStream("C:/ThisIsJavaTemp/test.txt");
-		Reader reader = new InputStreamReader(is, "UTF-8");
-		char[] data = new char[1000];
-		int num = reader.read(data);
-		reader.close();
-		String str = new String(data, 0, num);
-		return str;
+		try {
+			InputStream is = new FileInputStream("C:/ThisIsJavaTemp/test.txt");
+			Reader reader = new InputStreamReader(is);
+			char[] data = new char[100];
+			int num = reader.read(data);
+			
+			is.close();
+			reader.close();
+			
+			String str = new String(data, 0, num);
+			
+			return str;
+			
+ 		}catch(IOException e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 }
