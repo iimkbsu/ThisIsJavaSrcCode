@@ -1,21 +1,27 @@
 package ch18.sec07.exam02;
 
 import java.io.*;
+
 public class ReadLineExample {
 
 	public static void main(String[] args) throws Exception {
 		
-		BufferedReader br = new BufferedReader(new FileReader("src/ch18/sec07/exam02/ReadLineExample.java"));
-
-		int lineNo = 1;
+		FileReader fr = new FileReader("src/ch18/sec07/exam02/ReadLineExample.java");
+		BufferedReader br = new BufferedReader(fr);
+		
+		int lineNum = 1;
 		while(true) {
-			String str = br.readLine(); //한 행씩 문자열 읽음
+			String str = br.readLine();
+			
+			lineNum++;
 			if(str == null) {
 				break;
 			}
-			System.out.println(lineNo + "\t" + str);
-			lineNo++;
+			System.out.println(lineNum+ "\t" + str);
+			
 		}
+		
+		
 		br.close();
 	}
 

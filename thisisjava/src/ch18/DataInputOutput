@@ -372,6 +372,85 @@
 			
 			BufferedReader br = new BufferedReader(문자 입력 스트림);
 			BufferedWriter bw = new BufferedWriter(문자 출력 스트림);
+			
+			
+		
+		
+		■■■■ BufferedReader클래스의 readLine() 메소드 사용하기 ■■■■	
+		
+			FileReader fr = new FileReader("C:/...");
+			BufferedReader br = new BufferedReader(fr);
+			
+			while(true) {
+				String tmpStr = br.readLine();
+				if(tmpStr == null) {
+					break;
+				}
+				System.out.println(tmpStr);
+			}
+			br.close();
+
+
+----------------------------------------------------------------------------------
+
+	8. 기본 타입 스트림 (보조스트림)
+	
+		- 바이트스트림 → (기본 타입 보조 스트림) → 기본타입 스트림
+		- DataInputStream
+		- DataOutputStream
+		
+		
+		□□□□ DataInputStream 제공 메소드 □□□□
+		
+			boolean readBoolean()
+			byte readByte()
+			char readChar()
+			double readDouble()
+			float readFloat()
+			int readInt()
+			long readLong()
+			shot readShort()
+			String readUTF()
+			
+			
+		□□□□ DataInputStream 제공 메소드 □□□□
+		
+			void readBoolean(boolean v)
+			void readByte(int v)
+			void readChar(int v)
+			void readDouble(double v)
+			void readFloat(float v)
+			void readInt(int v)
+			void readLong(long v)
+			void readShort(int v)
+			void readUTF(String str)
+	
+		
+		■■■■ DataInputStream / DataOutputStream 사용하기 ■■■■
+		
+			FileInputStream fis = new FileInputStream("경로");
+			DataInputStream dis = new DataInputStream(is);
+			
+			
+			FileOutputStream fos = new FileOutputStream("경로");
+			DataoutputStream dos = new DataOutputStream(fos);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
