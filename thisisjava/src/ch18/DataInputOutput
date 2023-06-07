@@ -323,6 +323,9 @@
 
 	6. 문자 변환 스트림 (보조 스트림)
 	
+	InputStreamReader
+	OutputStreamWriter
+	
 		- InputStream → Reader로 변환
 			- 바이트 스트림 → 문자 입력 스트림
 			- 보조스트림 InputStreamReader 사용
@@ -350,7 +353,14 @@
 		
 ------------------------------------------------------------------------------------
 
-	7. 성능 향상 스트림 (보조 스트림)		
+	7. 성능 향상 스트림 (보조 스트림)
+	
+	BufferedInputStream
+	BufferedOutputStream
+	
+	BufferedReader
+	BufferedWriter
+			
 		
 		- 네트워크, DB, 저장공간과 프로그램 사이에 메모리 버퍼를 사용하여 통신 횟수를 줄여 성능을 향상시킴 (읽고 쓰는 데에 매우 빨라짐)
 		- 특히 문자입력 스트림 Reader에 BufferedReader을 연결하면 성능향상 + readLine() 메소드를 사용할 수 있음
@@ -395,9 +405,10 @@
 
 	8. 기본 타입 스트림 (보조스트림)
 	
+	DataInputStream
+	DataOutputStream
+	
 		- 바이트스트림 → (기본 타입 보조 스트림) → 기본타입 스트림
-		- DataInputStream
-		- DataOutputStream
 		
 		
 		□□□□ DataInputStream 제공 메소드 □□□□
@@ -428,28 +439,156 @@
 		
 		■■■■ DataInputStream / DataOutputStream 사용하기 ■■■■
 		
-			FileInputStream fis = new FileInputStream("경로");
-			DataInputStream dis = new DataInputStream(is);
-			
-			
+		try{
+		
 			FileOutputStream fos = new FileOutputStream("경로");
 			DataoutputStream dos = new DataOutputStream(fos);
+		
+			dos.writeUTF("문장");
+			dos.writeInt(1);
+			dos.writeDouble(1.1);
+			
+			dos.writeUTF("문장2");
+			dos.writeInt(2);
+			dos.writeDouble(2.1);
+			
+			dos.flush();
+			dos.close();
+			fos.close();
+			
+			
+			FileInputStream fis = new FileInputStream("경로");
+			DataInputStream dis = new DataInputStream(fis);
+			
+			
+			//읽어오기 방법1
+			for(int i=0; i<2; i++) {
+				String str = dis.readUTF();
+				int num = dis.readInt();
+				double score = dis.readDouble();
+				
+				System.out.println(str + num + score);
+			}
+			
+			
+			//읽어오기 방법2	( read() 메소드 사용 시 읽어올 게 없어서 null인 경우 EOFException 예외발생, 예외처리를 통해 while문 break로 빠져나옴)
+			try {
+				while(true) {
+					String str = dis.readUTF();
+					int num = dis.readInt();
+					double score = dis.readDouble();
+				
+					System.out.println(str + num + score);
+				}
+				
+			}catch(EOFException e) {
+				break;
+			}
+			
+			
+			
+		}catch(IOException e){
+		
+		}
+		
 
 
+----------------------------------------------------------------------------
+
+	9. 프린트 스트림 (보조스트림)
+	
+	PrintStream
+	PrintWriter
+	
+		- System.out.print() / System.out.printf() / System.out.println() 에서 out이 프린트스트림 타입
+		- PrintStream / PrintWriter는 print() printf() println() 메소드를 갖고있는 보조스트림이다
+		
+		
+		
+		
+		□□□□ PrintStream / PrintWriter 메소드 □□□□
+			
+			void print(boolean b)
+			void print(char c)
+			void print(double d)
+			void print(int i)
+			void print(float f)
+			void print(long l)
+			void print(Object obj)
+			void print(String str)
+			
+			void println(boolean b)
+			void println(char c)
+			void println(double d)
+			void println(int i)
+			void println(float f)
+			void println(long l)
+			void println(Object obj)
+			void println(String str)
+			void println()
+		
+			void printf()
+						
+
+		■■■■ PrintStream / PrintWriter 사용하기 ■■■■
+
+			PrintStream ps = new PrintStream(바이트출력스트림);
+			
+			PrintWrtier pw = new PrintWriter(바이트출력스트림/문자출력스트림);
+			
+			
+			ps.print();
+			ps.println();
+			ps.printf();
+			
+			ps.print();
+			pw.println();
+			pw.printf();
+			
+			
+		
+--------------------------------------------------------------------------------------------			
+
+	10. 객체 스트림 (보조스트림)
+	
+	ObjectInputStream
+	ObjectOutputStream
+	
+		- 직렬화(serialization)		: 객체를 입출력하기 위해 일렬로 늘어선 바이트로 변경
+		- 역직렬화(deserialization)	: 일렬로 늘어선 바이트를 객체로 변경
+		
+			# java.io.Serializable 인터페이스를 구현한 객체만 스트림에서 객체로, 객체에서 스트림을 변환 가능
+		
+		
+		바이트 → InputStrema → (ObjectInputStream/역직렬화) → 프로그램 객체 → (ObjectOutputStream/직렬화) → OutputStream → 바이트
+		
+		
+		■■■■ ObjectInputStream / ObjectOutputStream 사용하기 ■■■■
 
 
+			ObjectInputStream ois = new ObjectInputStream(바이트 입력 스트림);
+			ObjectOutputStream oos = new ObjectOutputStream(바이트 출력 스트림);
+			
+			객체타입 변수 = (객체타입) ois.readObject();	// 바이트를 객체타입으로 입력하기위한 메소드
+			oos.writeObject(obj); 	// 객체를 바이트로 출력하기위한 메소드
 
 
-
-
-
-
-
-
-
-
-
-
+	
+	
+	
+		# java.io.Serializable 인터페이스와 serialVersionUID 필드
+		
+			- 직렬화가 필요한 객체는 implements Serializable 해줘야 함
+			- 직렬화 가능 객체에서 직렬화 필요없는 필드는 앞에 transient 선언해 주면 됨
+			- static 필드도 직렬화 제외됨
+			
+			- 직렬화 클래스의 경우 static final long serialVerionUID 필드에 고유 숫자를 넣어줘야함
+				- 직렬화, 역직렬화 할 때 동일 객체임을 나타내기 위해
+				- 이클립스에서 자동으로 넣어주는 기능이 있음 (Add generated serial version ID)
+		
+		
+		
+-----------------------------------------------------------------------------------------
 
 
 
