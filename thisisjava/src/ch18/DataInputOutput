@@ -590,6 +590,151 @@
 		
 -----------------------------------------------------------------------------------------
 
+	11. File 클래스 / Files 클래스 (= File 개선 클래스)
+	
+		- 파일과 디렉토리 정보 저장할 수 있는 패키지들
+		- java.io.File
+		- java.nio.file.Files
+
+		
+		
+	File 클래스
+			- java.io.File
+		
+		■■■■ File 객체 생성 방법 ■■■■
+		
+		File file = new File("경로"); // 윈도우는 '/' or '\\' 맥은 '/'로 경로 표기
+		
+		boolean isExist = file.exists(); // 파일 존재 여부. t/f 리턴
+		
+		□□□□ false 리턴인 경우 사용 메소드 □□□□
+			
+			boolean createNewFile()		: 새로운 파일 생성
+			boolean mkdir()				: 새로운 디렉토리 생성 (이미 있는 경로에서 최종 디렉토리만 생성, 경로가 잘못된 경우 예외발생)
+			boolean mkdirs()			: 경로상에 없는 모든 디렉토리 생성 (경로가 없어도 최종 디렉토리까지 전부 생성)
+			
+			
+		□□□□ true 리턴인 경우 사용 메소드 □□□□
+
+			boolean delete()			: 파일 or 비어있는 디렉토리 삭제
+			boolean canExecute()		: 실행파일인지 여부
+			boolean canRead()			: 읽기파일인지 여부
+			boolean canWrite()			: 쓰기(수정/저장)파일인지 여부
+			
+			boolean isDirectory()		: 디렉토리인지 여부
+			boolean isFile()			: 파일인지 여부
+			boolean isHidden()			: 숨김파일인지 여부
+			
+			String getName()			: 파일 이름 리턴
+			String getParent()			: 부모 디렉토리 리턴
+			String getPath()			: 전체경로 리턴
+			
+			File getParentFile()		: 부모 디렉토리를 File 객체로 리턴
+			
+			long lastModified()			: 마지막 수정날짜시간 리턴
+			long length()				: 파일 크기 리턴
+			
+			String[] list()							: 디렉토리에 포함된 파일, 서브 디렉토리 목록 전부 String 배열로 리턴
+			String[] list(FilenameFilter filter)	: 디렉토리에 포함된 파일, 서브 디렉토리 목록에서 FilenameFilter에 맞는 것만 걸러서 String 배열로 리턴
+			File[] listFiles()						: 디렉토리에 포함된 파일, 서브 디렉토리 목록 전부 File 배열로 리턴
+			File[] listFiles(FilenameFilter filter)	: 디렉토리에 포함된 파일, 서브 디렉토리 목록에서 FilenameFilter에 맞는 것만 걸러서 File 배열로 리턴
+			
+			
+			
+			
+	Files 클래스
+	
+		- 모든 메소드가 static 메소드이므로 Files 객체생성없이 메소드 사용 가능
+		
+		□□□□ Files 클래스 제공 static 메소드 □□□□
+			
+			# 참고로 아래 모든 메소드는 매개값으로 Path 객체를 받음
+			# Path path = Paths.get(String first, String .... more);
+		
+			copy
+			
+			createDirectories
+			createDirecotry
+			createFile
+			createLink
+			createSymbolicLink
+			createTempDirectory
+			createTempFile
+			
+			move
+			
+			delete
+			deleteExists
+			
+			exists
+			notExists
+			find
+			mismatch
+			
+			getLastModifiedTime
+			getOwner
+			getPosixFilePermissions
+			
+			isDirectory
+			isExecutable
+			isHidden
+			isReadable
+			isWritable
+			isSymbolicLink
+			
+			size
+			
+			setAttribute
+			setLastModifiedTime
+			setOwner
+			setPosixFilePermissions
+			
+			probeContentType
+			
+			list
+			newDirectoryStream
+			walk
+			
+			newInputStream
+			newOutputStream
+			newBufferedReader
+			newBufferedWriter
+			
+			readAllBytes
+			lines
+			readAllLines
+			readString
+			readSymbolicLink
+			write
+			writeString
+		
+	
+		■■■■ Path 객체로 경로 얻는 방법들 ■■■■
+			
+			Path path1 = Paths.get("C:/temp/dir/file.txt");
+			Path path2 = Paths.get("C:/temp/dir", "file.txt");
+			Path path3 = Paths.get("C:". "temp", "dir", "file.txt");
+			
+			# 현재 디렉토리 위치가 C:/temp일 경우
+			
+				Path path4 = Paths.get("dir/file.txt");
+				Path path5 = Paths.get("./dir/file.txt");
+			
+			# 현재 디렉토리 위치가 C:/temp/dir1인데 temp/dir2의 file.txt가 있는 경우
+			
+				Path path = Paths.get("../dir2/file.txt");
+	
+	
+-----------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
 
 
 
