@@ -76,7 +76,17 @@
 	2. Java에서 IP 주소 얻기
 
 		- 내부(로컬) IP 주소 / 외부(공인) IP 주소 (또는 DNS) 얻기
-		- java.net 패키지의 InetAddress 클래스 객체로 IP 주소를 표현함
+		- java.net 패키지의 InetAddress 클래스 객체에 IP 주소 주인 이름(도메인)과 IP 주소를 저장함
+		
+		□□□□ IP 주소 얻는 InetAddress의 정적 메소드 □□□□
+		
+			- InetAddress.getLocalHost();
+			- InetAddress.getByName();
+			- InetAddress.getAllByName();
+			- InetAddress.getByAddress();
+			
+				- InetAddress 객체를 new 연산자로 만들 수 없고 항상 위의 getXXX() 메소드로 객체를 생성해야 함
+				- InetAddress의 인스턴스 메소드를 사용하려면 위 처럼 객체를 생성한 후 사용 가능
 	
 	
 		
@@ -99,20 +109,58 @@
 		
 		
 		
-		# 참고로 윈도우 CMD에서 tracert 도메인이름 커맨드를 입력하면 IP주소를 얻을 수 있음
+		# 참고로 윈도우 CMD에서 [tracert 도메인이름] 커맨드를 입력하면 도메인에 연결된 IP주소 한 개를 얻을 수 있음
 
 
 
+------------------------------------------------------------------------------------
+
+	# 네트워크 OSI 7계층
+
+		네트워크 기초.hwp 참고
+		
+-----------------------------------------------------------------------------------
+
+	3. TCP 네트워킹
+
+		- Transmission Control Protocol
+		- OSI 4층 (전송계층) UDP/TCP
+		- 양방향 연결형 서비스
+		- 가상회선 연결 서비스
+		- 스트림(패킷)단위 전송
+		- 신뢰성 경로 설정 : 신뢰가 보장된 경로를 확정한 후 데이터를 스트림으로 보냄(순서대로), 데이터 손실 X
+		- 메시지 전송 감독
 
 
+	# 자바에서 TCP 네트워킹
+	
+		- 서버 쪽에서 클라이언트와 연결을 수락, 요청 처리하는 클래스
+			- import java.net.ServerSocket;
+				- IP 주소와 Port 번호 필요
+				- accept() 메소드 사용하여 연결 수락 및 통신용 서버 socket 생성
+		
+		- 클라이언트 쪽에서 연결 및 처리를 요청하는 클래스, 서버-클라 데이터 주고받을 때 사용하는 클래스
+			- import java.net.Socket;
+			
+		
+		□□□□ TCP 서버 사용하기 □□□□
+		
+			// 서버 컴퓨터에 하나의 IP 주소만 있는 경우 방법1
+			ServerSocket ss = new ServerSocket(Port번호);
+			
+			// 서버 컴퓨터에 하나의 IP 주소만 있는 경우 방법2, binding 사용
+			ServerSocekt ss = new ServerSocket();
+			ss.bind(new InetSocketAddress(Port번호));
+		
+		
+			// 서버 컴퓨터에 여러 IP 주소가 할당되어있는 경우
+			ServerSocket ss = new ServerSocket();
+			ss.bind( new InetSocektAddress("연결할 특정 IP주소", Port번호) ); // IP 주소 : "XXX.XXX.XXX.XXX"
+		
 
-
-
-
-
-
-
-
+			------------------
+			
+			
 
 
 

@@ -13,9 +13,9 @@ public class InetAddressExample {
 			// 현재 컴퓨터(로컬호스트) IP 주소 얻기
 			InetAddress ia = InetAddress.getLocalHost();
 			
-			System.out.println(ia);
-			System.out.println(ia.getAddress()); // 이거는 스택에 있는 객체 주소를 불러옴
-			System.out.println(ia.getHostAddress());
+			System.out.println(ia); // InetAddress 객체에 저장된 주소 주인이름과 IP 주소를 불러옴
+			System.out.println(ia.getAddress()); // 이 메소드는 스택에 있는 객체 주소를 불러옴
+			System.out.println(ia.getHostAddress()); // InetAddress 객체에 있는 IP 주소만 불러옴
 			System.out.println();
 			
 			
