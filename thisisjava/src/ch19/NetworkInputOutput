@@ -132,11 +132,11 @@
 		- 메시지 전송 감독
 
 
-	# 자바에서 TCP 네트워킹
+	# 자바에서 TCP 네트워킹 (서버 쪽 + 클라 쪽)
 	
 		- 서버 쪽에서 클라이언트와 연결을 수락, 요청 처리하는 클래스
 			- import java.net.ServerSocket;
-				- IP 주소와 Port 번호 필요
+				- 서버 컴퓨터 IP 주소와 서버 Port 번호 필요
 				- accept() 메소드 사용하여 연결 수락 및 통신용 서버 socket 생성
 		
 		- 클라이언트 쪽에서 연결 및 처리를 요청하는 클래스, 서버-클라 데이터 주고받을 때 사용하는 클래스
@@ -145,30 +145,54 @@
 		
 		□□□□ TCP 서버 사용하기 □□□□
 		
-			// 서버 컴퓨터에 하나의 IP 주소만 있는 경우 방법1
-			ServerSocket ss = new ServerSocket(Port번호);
+			// 서버 쪽
 			
-			// 서버 컴퓨터에 하나의 IP 주소만 있는 경우 방법2, binding 사용
-			ServerSocekt ss = new ServerSocket();
+			ServerSocket ss = new ServerSocket(Port번호);   // 서버 컴퓨터에 하나의 IP 주소만 있는 경우 방법1
+			
+			
+			ServerSocekt ss = new ServerSocket();   // 서버 컴퓨터에 하나의 IP 주소만 있는 경우 방법2, binding 사용
 			ss.bind(new InetSocketAddress(Port번호));
 		
 		
-			// 서버 컴퓨터에 여러 IP 주소가 할당되어있는 경우
-			ServerSocket ss = new ServerSocket();
-			ss.bind( new InetSocektAddress("연결할 특정 IP주소", Port번호) ); // IP 주소 : "XXX.XXX.XXX.XXX"
+			ServerSocket ss = new ServerSocket();   // 서버 컴퓨터에 여러 IP 주소가 할당되어있는 경우
+			ss.bind( new InetSocektAddress("연결할 특정 IP 주소", Port번호) );   // IP 주소 : "XXX.XXX.XXX.XXX"
 		
 
-			------------------
+			# Port 번호가 이미 다른 프로그램에서 사용 중이라면 BindException 발생
+			# 다른 Port 번호를 사용하거나 그 프로그램 사용 종료 후 사용하면 해결
+			# accept() 메소드를 실행하면 바로 연결이 되는 것이 아니라 클라 쪽에서 연결 요청하기까지 대기함 (블로킹)
 			
 			
+			
+			Socket s = ss.accept();    // 서버 accept()는 블로킹, 클라에서 요청해야 비로소 연결 됨
+			
+			InetSocketAddress isa = (InetSocketAddress) s.getRemoteSocketAddress();    // InetSocketAddress로 강제타입변환 해줘야 함
+			String clientIP = isa.getHostName();   // 클라 쪽 IP 주소 얻기
+			String clientIP = isa.getHostString();   // 위의 getHostName() 메소드로 IP 주소가 아닌 기기 이름이 출력될 경우 사용
+			String portNo = isa.getPort();    //  클라 쪽 Port 번호 얻기
+			
+			ss.close();   // 서버 소켓 종료, Port 번호 재사용 가능
 
 
 
+		□□□□ TCP 클라이언트 사용하기 □□□□
 
+			Socket s = new Socket("서버 컴퓨터 IP 주소", Port 번호);   // 서버 컴퓨터의 IP 주소를 알 때 서버에 연결 요청
+			
+			Socket s = new Socket(InetAddress.getByName("도메인명"), Port 번호);   // 서버의 도메인명만 알 때 서버 연결 요청 방법
 
-
-
-
-
-
+			Socket s = new Socket();
+			s.connect( new InetSocketAddress("도메인명", Port번호) ); // connect() 메소드를 사용해서 서버에 연결 요청할 수도 있음
+			
+			
+			// 클라 연결 요청 시 UnknownHostException / IOException 예외 발생 가능
+			try{
+				//연결요청
+			}catch( UnknownHostException e){
+			
+			}catch( IOException e){
+			
+			}
+			
+			s.close();  // 클라 쪽에서 연결 해제
 
