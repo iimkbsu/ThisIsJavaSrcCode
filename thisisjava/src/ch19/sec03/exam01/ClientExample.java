@@ -20,9 +20,10 @@ public class ClientExample {
 			System.out.println("[클라이언트] 연결 끊음");
 			
 		}catch(UnknownHostException e) {
+			System.out.println("UnknownHostException : " + e.toString());
 			
-		}catch(IOException e) {
-			
+		}catch(IOException e1) {
+			System.out.println("IOException : " + e1.toString());
 		}
 		
 

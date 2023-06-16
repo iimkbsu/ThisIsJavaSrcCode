@@ -145,7 +145,7 @@
 		
 		□□□□ TCP 서버 사용하기 □□□□
 		
-			// 서버 쪽
+			// 서버 쪽 (Thread thread = new Thread(){@Override public void run(){}}; 사용권장)
 			
 			ServerSocket ss = new ServerSocket(Port번호);   // 서버 컴퓨터에 하나의 IP 주소만 있는 경우 방법1
 			
@@ -175,8 +175,9 @@
 
 
 
-		□□□□ TCP 클라이언트 사용하기 □□□□
-
+		□□□□ TCP 클라이언트 사용하기 (서버가 accept()로 블로킹 대기 중인 상태여야 함) □□□□
+			
+			// 세 가지 방법 중 골라서 사용
 			Socket s = new Socket("서버 컴퓨터 IP 주소", Port 번호);   // 서버 컴퓨터의 IP 주소를 알 때 서버에 연결 요청
 			
 			Socket s = new Socket(InetAddress.getByName("도메인명"), Port 번호);   // 서버의 도메인명만 알 때 서버 연결 요청 방법
@@ -195,4 +196,58 @@
 			}
 			
 			s.close();  // 클라 쪽에서 연결 해제
+
+
+		
+		- 서버와 클라 소켓이 통신 연결된 후 각 소켓 객체에서 InputStream/OutputStream을 얻을 수 있음
+
+		□□□□ (서버와 클라가 연결된 후) 입출력 스트림으로 데이터 주고 받기 □□□□
+		
+			// 소켓 만들기 (서버, 클라측 각각 만듦)
+			Socket s = new Socket( InetAdress.getByName("도메인명"), Port번호);
+
+			---------------------- 소켓에서 OutputStream 얻기 ----------------------------------
+			
+			// 소켓에서 OutputStream 얻고 데이터 출력하기 방법 1 (데이터를 바이트 배열로 바꿔주는 작업 필요)
+			String data = "보낼 데이터";
+			byte[] bytes = data.getBytes("UTF-8");
+			OutputStream os = s.getOutputStream();
+			os.write(bytes);
+			os.flush();
+
+
+			// 소켓에서 OutputStream 얻고 데이터 출력하기 방법 2 (DataOutputStream 보조 스트림 사용하여 간단하게 작업)
+			String data = "보낼 데이터";
+			DataOutputStream dos = new DataOutputStream(s.getOutputStream());
+			dos.writeUTF(data);
+			dos.flush();
+
+			----------------------- 소켓에서 InputStream 얻기 --------------------------------------------
+
+			// 소켓에서 InputStream 얻고 데이터 출력하기 방법 1 (데이터를 바이트 배열로 바꿔주는 작업 필요)
+			byte[] bytes = new byte[1024];
+			InputStream is = s.getInputStream();
+			int num = is.read(bytes);
+			String data = new String(bytes, 0, num, "UTF-8");
+
+
+			// 소켓에서 InputStream 얻고 데이터 출력하기 방법 2 (DataInputStream 보조 스트림 사용하여 간단하게 작업)
+			DataInputStream dis = new DataInputStream(s.getInputStream());
+			String data = dis.readUTF();
+
+
+---------------------------------------------------------------
+
+	4. UDP 네트워킹
+
+
+
+
+
+
+
+
+
+
+
 
