@@ -240,11 +240,51 @@
 
 	4. UDP 네트워킹
 
+		- User Datagram Protocol
+		- 비 연결형 통신 서비스
+		- 신뢰성 X
+		- TCP 보다 전송속도 빠름 (영상전송에서 몇 프레임 없어졌다고 영상 수신에 문제가 있는 것은 아니므로 UDP 사용)
+		- java.net 패키지에서 DatagramSocket 클래스 (발신,수신 위치)/ DatagramPacket 클래스 (발신,수신 데이터) 제공
+		
+		
+		□□□□ UDP 서버 사용하기 □□□□
+		
+			DatagramSocket dgs = new DatagramSocket(Port번호);
+			
+			DatagramPacket receiveP = new DatagramPacket(new byte[1024], 1024);  //(수신데이터 저장할 배열, 수신 가능 최대 바이트 수)
+			dgs.receive(receiveP); //데이터 수신 전까지 블로킹, dgs로 데이터가 수신된 경우 dgp에 데이터 담음
+			
+			// 수신 받은 데이터와 바이트 수 얻기
+			byte[] bytes = dgp.getData();
+			int num = dgp.getLength();
+			
+			// 문자열일 경우 String 생성자를 이용하여 문자열 얻기
+			String data = new String(bytes, 0, num, "UTF-8");
+			
+			// UDP 서버에서 클라에게 처리 내용 전송하기
+			
+			// 보낼 클라 IP주소, Port번호가 저장되어있음
+			SocketAddress sa = dgp.getSocketAddress(); 
+			
+			String data = "처리내용";
+			
+			// UTF-8 문자열을 문자 하나씩 바이트로 바꿔서 바이트 배열에 담음
+			byte[] bytes = data.getBytes("UTF-8"); 
+			
+			// (바이트 배열, 시작 인덱스, 보낼 바이트 수, 보낼 socketAdrress)
+			DatagramPacket sendP = new DatagramPacket(bytes, 0, bytes.length, sa);
 
+			// 패킷 데이터를 클라로 전송
+			dgs.send(sendP); 
+			
+			//UDP 서버 종료
+			dgs.close();
 
-
-
-
+		
+		
+		□□□□ UDP 클라이언트 사용하기 □□□□
+		
+			
 
 
 
