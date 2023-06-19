@@ -255,8 +255,8 @@
 			dgs.receive(receiveP); //데이터 수신 전까지 블로킹, dgs로 데이터가 수신된 경우 dgp에 데이터 담음
 			
 			// 수신 받은 데이터와 바이트 수 얻기
-			byte[] bytes = dgp.getData();
-			int num = dgp.getLength();
+			byte[] bytes = receiveP.getData();
+			int num = receiveP.getLength();
 			
 			// 문자열일 경우 String 생성자를 이용하여 문자열 얻기
 			String data = new String(bytes, 0, num, "UTF-8");
@@ -284,9 +284,39 @@
 		
 		□□□□ UDP 클라이언트 사용하기 □□□□
 		
+			//클라 데이터그램소켓 생성
+			DatagramSocket dgs = new DatagramSocket();
+			
+			
+			//문자열 요청 내용을 바이트 배열로 바꾸기
+			String data = "요청 내용";
+			byte[] bytes = data.getBytes("UTF-8"); 
+			
+			
+			// 서버에 요청할 정보를 저장한 패킷 생성 (바이트배열, 배열에서 보낼 바이트 수, UDP서버 IP주소와 Port 번호를 저장한 InetSocektAddress)
+			DatagramPacket sendPacket = new DatagramPacket(bytes, 
+															bytes.length, 
+															new InetSocketAddress("localHost", 50001)
+															);
+			
+			//dgs에 sendPacket 보내기
+			dgs.send(sendPacket);
+			
+			dgs.close();
 			
 
+-------------------------------------------------------------------
 
+	5. 서버의 클라 동시요청 처리
+	
+		- 다수 클라의 요청에 대해 서버에서 스레드풀을 사용하여 다중 요청 처리하기
+			- 스레드풀은 스레드 생성 개수를 제한하므로 갑작스러운 클라이언트 요청 폭증이 발생했을 경우 서버가 터지는 것을 막을 수 있음
+			
+		- TCP 서버(에코서버)
+			- 클라에서 데이터를 받고 보내는 작업을 스레드 처리
+		
+		- UDP 서버(뉴스10개 보내는 서버)
+			- 10개 뉴스 클라에게 전송하는 작업을 스레드 처리
 
 
 

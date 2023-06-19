@@ -82,6 +82,7 @@
 		
 	스레드풀 execute 으로 실행
 	
+		// 방법1
 		 myThreadPool.execute(new Runnable(){
 			@Override
 			public void run(){
@@ -89,9 +90,16 @@
 			}
 		});
 		
+		
+		// 방법2 
+		// Runnable 인터페이스에 매개변수가 없는 Run() 메소드 하나있으므로 람다식으로 작성 가능
+		
+		myThreadPool.execute(()->{
+			// 스레드풀에서 스레드들이 나눠서 처리할 내용
+		});
 	
 	
-	스레드풀 sumbit으로 실행하고 결과 future로 리턴받기
+	스레드풀 submit으로 실행하고 결과 future로 리턴받기
 		
 		Future<Integer> future = myThreadPool.submit(new Callable<Integer>(){
 			@Override
@@ -581,13 +589,15 @@ wait(), notify() 메소드를 이용한 스레드 제어 및 동기화
 			- newCachedThreadPool()				: 초기 수:0	코어 수:0 		최대 수:integer.MAX_VALUE		무작업 스레드 유지기간 :60초	사용 여부: 제한이 없어 잘 사용 안 함
 			- newFixedThreadPool(int n)			: 초기 수:0	코어 수:생성 수		최대 수:n						무작업 스레드 유지기간 :무한 	사용 여부: 많이 사용 함
 			
+			
+			
 			import java.util.concurrent.Executors; //클래스
 			import java.util.concurrent.ExecutorService; //인터페이스
 		
-			ExecutorService es = Executors.newCachedThreadPool(); 
-			또는
+			ExecutorService threadPool = Executors.newCachedThreadPool(); 
 			
-			ExecutorService es = Executors.newFixedThreadPool(5);
+			//또는
+			ExecutorService threadPool = Executors.newFixedThreadPool(5);
 		
 		
 		
