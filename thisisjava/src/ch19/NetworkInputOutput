@@ -313,10 +313,185 @@
 			- 스레드풀은 스레드 생성 개수를 제한하므로 갑작스러운 클라이언트 요청 폭증이 발생했을 경우 서버가 터지는 것을 막을 수 있음
 			
 		- TCP 서버(에코서버)
-			- 클라에서 데이터를 받고 보내는 작업을 스레드 처리
+			- 클라에서 데이터를 받고 보내는 작업을 스레드풀 처리
 		
 		- UDP 서버(뉴스10개 보내는 서버)
-			- 10개 뉴스 클라에게 전송하는 작업을 스레드 처리
+			- 10개 뉴스 클라에게 전송하는 작업을 스레드풀 처리
+
+
+		# 14장 멀티스레드 참고
+		
+		
+
+----------------------------------------------------------------------------------------
+
+	6. JSON 데이터 형식
+	
+		- 속성-값 쌍, 키-값 쌍, 배열/시리얼화 가능한 모든 값 으로 이루어진 데이터 오브젝트를 전달하기 위해 사람이 읽을 수 있는 텍스트를 사용하는 개방형 표준 포멧
+		- JSON : (JavaScript Object Notation), 서버에서 클라로 데이터 보낼 떄 사용하는 양식, 컴퓨터언어에 관계없이 동일한 데이터 주고 받을 수 있음, XML의 단점(가독성, 용량)을 보완
+		- JSON 단점 : 주석 미지원, 날짜/시간 데이터 미지원, 데이터 타입 강제하려면 JSON 스키마로 보완해야 함
+			
+		- XML : (Extensible Markup Language), 공유 가능한 방식으로 데이터를 저장할 수 있는 마크업 언어, 여러 DB/웹사이트/컴퓨터간 데이터 교환을 지원함
+		- XML 단점 : 가독성 똥망, 용량이 너무 큼
+		
+		
+		- JSON 문자열로 직접 작성가능하지만 보통 라이브러리 사용(JSON-java)
+			- JSON-java.jar 다운로드 받은 후 lib에 넣고 Add buildPath 해줌 
+
+		
+	
+		□□□□ JSON 표기방식 □□□□
+		
+		{
+ 			"이름공간(키)": "값",
+  			"값 구분자": "각각의 값들은 ',' (콤마)로 구분되어야 합니다.",
+ 			"이스케이프": "키나 값에서 큰따옴표를 쓰고 싶으면-특정 문자를 이스케이프 하려면- \" 처럼 문자 앞에 역슬래시를 붙입니다.",
+  			"자료형": "표현 가능한 자료형은 문자열, 숫자, 불리언, 널, 객체, 배열 6개입니다.",
+  			"문자열 값": "안녕하세요, 여러분",
+  			"숫자 값": 19721121,
+  			"불리언 값": true,
+  			"널 값": null,
+  			"객체 값": {
+   					 "값1": 3.141592653589793,
+    				 "값2": false,
+    				 "값3": {
+      						"객체 안에": "객체를 넣는것도 가능하지요",
+     						 "구분자": "또한 키와 값은 ':' 로 구분됩니다"
+   							}
+ 					 },
+  			"배열 값": [
+    					"이것은 배열입니다.",
+    					{
+      						"현재 값의 인덱스": 1,
+      						"이런 식으로": "배열 안에 여러 값을 넣을 수 있습니다."
+    					},
+    					[ "배열", "안에", "배열을", "넣는것도", "가능하지요" ]
+  					],
+ 		 	"값의 개수가 적을때는": "다음과 같이 한 줄로도 객체와 배열 표현이 가능합니다.",
+ 		 	"한 줄 객체": { "김두한": "개소리 집어쳐", "심영": "내가 고자라니", "의사양반": "전화는 없어요" },
+  			"한 줄 배열": [ "나무위키는", "누구나", "기여할", "수", "있는", "위키입니다." ]
+		}
+
+		// 사용 예
+		{
+			"id": "winter",
+			"name": "한겨울",
+			"age": 25,
+			"student" : true;
+			"tel" : {"home": "02-123-1234", "mobile":"010-1111-1234"},
+			"skill": ["java", "c", "c++"]
+		}
+
+
+
+		□□□□ JSON 라이브러리 사용하여 JSON 작성하고 출력 및 파일로 저장하기 □□□□
+
+
+			## 사전 작업 : JSON-java.jar 다운로드 후 lib에 넣고 Add buildPath 하기 ##
+			
+			
+			
+			import org.json.JSONArray;		// [ ] 사용할 때
+			import org.json.JSONObject;		// { } 사용할 때
+			
+			// JSON 객체 생성
+			JSONObject root = new JSONObject();
+			
+			// 속성 추가
+			root.put("id", "winter");
+			root.put("student", true);
+			
+			// 객체 속성 추가
+			JSONObject tel = new JSONObject():
+			tel.put("home", "02-123-1234");
+			tel.put("mobile", "010-1234-1234");
+			
+			root.put("tel", tel);
+			
+			// 배열 속성 추가
+			JSONArray skill = new JSONArray();
+			skill.put("java");
+			skill.put("c++");
+			
+			root.put("skill", skill);
+			
+			// JSON 문자열로 얻기
+			String json = root.toString();
+			
+			// JSON 출력
+			System.out.println(json);
+			
+			// Writer 스트림 사용하여 파일로 저장하기 (예외처리하기)
+			Writer writer = new FileWriter("저장경로", Charset.forName("UTF-8"));
+			writer.write(json);
+			writer.flush();
+			writer.close();
+
+			
+			# JSON은 속성 순서 따지지 않으므로 추가한 순서대로 작성되지 않음. 줄바꿈 처리 안 됨.
+			
+			
+			
+		□□□□ JSON 파일을 읽고 parsing 하기 □□□□
+		
+			FileReader fr = new FileReader("C:/ThisIsJavaTemp/member.json", Charset.forName("UTF-8"));
+			
+			BufferedReader br = new BufferedReader(fr);
+			
+			String json = br.readLine();
+			br.close();
+			
+			JSONObject jo = new JSONObject(json);
+			
+			
+			// .get()으로 퉁쳐도 됨
+			// .getXxx()/get()은 값이 null일 때 예외발생
+			// .optXxx()은 값이 null일 때 "" 출력 (예외발생 안 함)
+			
+			String id = jo.getString("id");		
+			int age = jo.getInt("age");
+			
+			
+			JSONObject tel = jo.getJSONObject("tel");
+			
+			String homeTel = tel.getString("home");
+			
+			System.out.println(id + age + homeTel);
+			
+			
+			JSONArray skill = jo.getJSONArray("skill");
+			
+			String skill1 = skill.get(0);
+			String skill2 = skill.get(1);
+			
+			System.out.println(skill1 + skill2);
+			
+
+
+------------------------------------------------------------------------------------------------
+
+	7. TCP 채팅 프로그램
+
+		- TCP 네트워킹(서버 소켓 + 클라 소켓)을 통해 채팅 프로그램 만들기
+		- 조건
+			- ChatServer 클래스
+				- 채팅 서버 실행 클래스
+				- ServerSocket을 생성하고 50001 Port번호로 바인딩
+				- ChatClient 연결 수락 후 SocketClient 생성
+			
+			- SocketClient 클래스
+				- ChatClient 클래스와 1대1 통신
+			
+			- ChatClient 클래스
+				- 채팅 클라이언트 실행 클래스
+				- ChatServer에 연결 요청
+				- SocketClient와 1대1 통신
+
+
+
+
+
+
 
 
 
