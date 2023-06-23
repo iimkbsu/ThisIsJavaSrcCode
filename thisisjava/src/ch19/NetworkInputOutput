@@ -444,9 +444,6 @@
 			JSONObject jo = new JSONObject(json);
 			
 			
-			// .get()으로 퉁쳐도 됨
-			// .getXxx()/get()은 값이 null일 때 예외발생
-			// .optXxx()은 값이 null일 때 "" 출력 (예외발생 안 함)
 			
 			String id = jo.getString("id");		
 			int age = jo.getInt("age");
@@ -465,6 +462,10 @@
 			String skill2 = skill.get(1);
 			
 			System.out.println(skill1 + skill2);
+			
+			// .get()으로 퉁쳐도 됨
+			// .getXxx()/get()은 값이 null일 때 예외발생
+			// .optXxx()은 값이 null일 때 "" 출력 (예외발생 안 함)
 			
 
 
