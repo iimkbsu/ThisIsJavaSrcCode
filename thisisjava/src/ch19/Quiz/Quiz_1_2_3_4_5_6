@@ -1,0 +1,88 @@
+
+1. 서버와 클라이언트에 대한 설명으로 틀린 것은?
+	- 서비스를 제공하는 쪽이 서버이고, 서비스를 요청하는 쪽이 클라이언트이다.
+	- 크랄이언트가 서버에 연결하기 위해서는 IP 주소만 있으면 된다. (X)
+	- Port 는 여러 서버 중에 특정 서버와 연결하기 위해 필요한 정보다.
+	- 서버와 클라이언트는 양쪽 모두 포트가 배정되어야 한다.
+	
+		# 클라이언트 소켓
+			- Socket clientSocket = new Socket("호스트 서버 IP주소", 서버 Port번호);
+		
+		
+		
+
+2. TCP와 UDP에 대한 설명으로 틀린 것은 (모두 고르기)
+	- TCP는 데이터 입출력에 앞서 연결 요청과 수락 과정이 필요하다.
+	- TCP는 여러 회선으로 데이터를 전달하므로, 데이터와 전달 순서가 달라질 수 있다. (X) (UDP에 대한 설명임)
+	- UDP는 연결 수락 과정이 없기 때문에 TCP보다 상대적으로 빠르다. 
+	- UDP는 고정된 회선으로 데이터를 전달하기 때문에 전달 신뢰도가 높다. (X) (TCP에 대한 설명임)
+	
+		# TCP (Transmission Control Protocol)
+			- 양방향 연결 서비스, 전송 데이터 단위 (스트림)패킷, 신뢰성 데이터 전달
+			- 서버 : ServerSocket → Socket(서버)
+			- 클라 : Socket(클라이언트)
+			- 양방향 모두 IP주소와 Port번호 필요 (InetSocketAddress/InetAddress로 정보 받음)
+			- 각 소켓에서 DataInputStream, DataOutputStream으로 데이터 스트림 사용
+	
+		# UDP (User Datagram Protocol)
+			- 비연결형 서비스, 전송 데이터 단위 (데이터그램)패킷, 신뢰성X, 데이터 손실 발생가능, TCP보다 빠른 전송속도
+			- 서버 : DatagramSocket (클라의 IP주소, 클라 Port번호 필요, getSocketAddress()사용, SocketAddress에 저장)
+			- 클라 : DatagramSocket (서버의 IP주소/도메인명, 서버의 Port번호 필요)
+			- DatagramPacket 데이터를 무작위로 송수신함
+		
+		
+			
+
+3. 다음은 TCP 클라이언트가 서버로 연결 요청을 하고 ㅅ버ㅓ는 연결을 수락하는 코드이다. 빈칸에 들어갈 코드를 작성하세요. (서버와 클라는 같은 컴퓨터에서 실행됨)
+
+	[클라이언트]
+	Socket socket = //빈칸	new Socket("localHost", 5001);
+	
+	[서버]
+	ServerSocket serverSocket = new ServerSocket(5001);
+	Socket socket = //빈칸	serverSocket.accept();
+	
+
+
+
+4. TCP를 사용하는 클라를 서버에 연결해 Socket으로 데이터 입출력을 하려고 합니다. 빈칸에 Socket을 통해 얻는 입출력 스트림의 타입을 적어보세요.
+
+	
+	
+	[클라]Socket ←←← InputStream ←←← OutputStream ←←← [서버]Socket
+	
+	[클라]Socket →→→ OutputStream →→→ InputStream →→→ [서버]Socket
+	
+	
+	
+
+5. UDP를 사용하는 클라이언트를 서버에서 사용되는 클래스 이름 및 데이터와 수신/발신할 때, 사용되는 클래스 이름을 1~5 빈칸에 작성해보세요.
+
+	
+	UDP 클라-[1.DatagramSocket] →→→ [2.DatagramPacket] →→→ [3.DatagramSocket]-UDP 서버
+	
+	UDP 클라-[1.DatagramSocket] ←←← [4.DatagramPacket] ←←← [3.DatagramSocket]-UDP 서버
+	UDP 클라-[1.DatagramSocket] ←←← [5.DatagramPacket] ←←← [3.DatagramSocket]-UDP 서버
+	
+	
+
+
+
+6. 서버 측 DatagramSocket에 대한 설명으로 틀린 것은 무엇인가요?
+	- 서버에서는 고정된 Port 번호를 제공하고 생성해야 한다.
+	- receive() 메소드는 데이터를 수신할 때까지 블로킹된다.
+	- 클라의 IP주소와 Port번호는 수신된 DatagramPacket에서 얻을 수 있다
+	- 서버에서 클라로 DatagramPacket을 발신할 때 write()메소드를 사용한다 (X) ( send(패킷) 사용 )
+
+
+
+
+
+
+
+
+
+
+
+
+
