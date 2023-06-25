@@ -30,8 +30,13 @@ public class ProductServer {
 		System.out.println("[서버] 시작됨");
 		
 		while(true) {
-			Socket s = ss.accept();
-			SocketClient sc = new SocketClient(s);
+			try {
+				Socket s = ss.accept();
+				SocketClient sc = new SocketClient(s);
+			}catch(IOException e) {
+				break;
+			}
+			
 		}
 	}
 	
@@ -56,8 +61,9 @@ public class ProductServer {
 		
 		public SocketClient(Socket s) {
 			
-			this.s = s;
+			
 			try {
+				this.s = s;
 				this.dis = new DataInputStream(s.getInputStream());
 				this.dos = new DataOutputStream(s.getOutputStream());
 				dataReceive();
@@ -128,6 +134,7 @@ public class ProductServer {
 		
 		public void update(JSONObject request) throws IOException {
 			JSONObject data = request.getJSONObject("data");
+			
 			int no = data.getInt("no");
 			for(int i=0; i<products.size(); i++) {
 				Product product = products.get(i);

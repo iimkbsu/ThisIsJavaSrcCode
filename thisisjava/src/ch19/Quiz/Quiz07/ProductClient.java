@@ -17,7 +17,7 @@ public class ProductClient {
 	private Scanner scanner;
 	
 	public void start() throws IOException {
-		s = new Socket("localHost", 50001);
+		s = new Socket("localhost", 50001);
 		dis = new DataInputStream(s.getInputStream());
 		dos = new DataOutputStream(s.getOutputStream());
 		System.out.println("[클라이언트] 서버에 연결됨");
@@ -31,8 +31,8 @@ public class ProductClient {
 		try {
 			s.close();
 			scanner.close();
-			System.out.println("[클라이언트] 종료됨");
 		}catch(Exception e) {
+			System.out.println("[클라이언트] 종료됨");
 		}
 		
 	}
@@ -70,6 +70,7 @@ public class ProductClient {
 		JSONObject response = new JSONObject(dis.readUTF());
 		if(response.getString("status").equals("success")) {
 			JSONArray data = response.getJSONArray("data");
+			
 			for(int i=0; i<data.length(); i++) {
 				JSONObject product = data.getJSONObject(i);
 				System.out.printf(
@@ -79,8 +80,8 @@ public class ProductClient {
 						 product.getInt("price"),
 						 product.getInt("stock")
 						 );
-						 }
-						 }
+				}
+		}
 		menu();
 	}
 	
@@ -90,9 +91,9 @@ public class ProductClient {
 		System.out.print("상품 이름 : ");
 		product.setName(scanner.nextLine());
 		System.out.print("상품 가격 : ");
-		product.setPrice(scanner.nextInt());
+		product.setPrice(Integer.parseInt(scanner.nextLine()));
 		System.out.print("상품 재고 : ");
-		product.setStock(scanner.nextInt());
+		product.setStock(Integer.parseInt(scanner.nextLine()));
 		
 		//
 		JSONObject data = new JSONObject();
@@ -121,13 +122,13 @@ public class ProductClient {
 		
 		Product product = new Product();
 		System.out.print("상품 번호 : ");
-		product.setNo(scanner.nextInt());
+		product.setNo(Integer.parseInt(scanner.nextLine()));
 		System.out.print("이름 변경 : ");
 		product.setName(scanner.nextLine());
 		System.out.println("가격 변경 : ");
-		product.setPrice(scanner.nextInt());
+		product.setPrice(Integer.parseInt(scanner.nextLine()));
 		System.out.println("재고 변경 : ");
-		product.setStock(scanner.nextInt());
+		product.setStock(Integer.parseInt(scanner.nextLine()));
 		
 		JSONObject data = new JSONObject();
 		data.put("no", product.getNo());
