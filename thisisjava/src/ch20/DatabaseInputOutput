@@ -1,0 +1,188 @@
+
+20. 데이터베이스 입출력
+
+	1. JDBC 개요
+	2. DBMS 설치
+	3. Client Tool 설치
+	4. DB 구성
+	5. DB 연결
+	6. 데이터 저장
+	7. 데이터 수정
+	8. 데이터 삭제
+	9. 데이터 읽기
+	10. 프로시저와 함수 호출
+	11. 트랜잭션 처리
+	12. 게시판 구현
+	
+	
+
+	
+-----------------------------------------------------------------------------------------
+
+	1. JDBC 개요
+	
+		- Java에서 제공하는 Java DataBase Connectivity 라이브러리
+		- DBMS(DataBase Management System) 종류와 상관없이 동일하게 사용 가능한 JDBC 라이브러리(프레임워크)의 클래스와 인터페이스로 구성되어있음
+		- java.sql 패키지
+		
+		
+		<연결구성>
+		어플리케이션 → JDBC(java.sql 패키지) 인터페이스 ← 각각의 JDBC Driver (각 DBMS에 맞는 걸 설치 사용) → 오라클DB/MySQL/MariaDB/MSSQL서버 등
+		
+			# JDBC는 자바 패키지에서 공통으로 사용가능하지만 JDBC Driver는 각각 DB서버에 맞게 다운로드해서 사용해야함
+			
+		
+		-------------------------------
+		
+		JDBC(java.sql 패키지) (인) 제공 클래스/인터페이스
+		
+		- DriverManger (클)
+			- Connection (인)
+				- Statement (인)
+					- ResultSet (공통 인)
+				- PreparedStatement (인)
+					- ResultSet (공통 인)
+				- CallableStatement (인)
+					- ResultSet (공통 인)
+					
+					
+		DriverManager : 클래스, JDBC Driver 관리, DB와 연결하고 Connection 구현 객체 생성
+		
+		Connection : 인터페이스, Statement/PreparedStatement/CallableStatement 구현 객체를 생성하고 트랜잭션처리 및 DB연결을 끊을 때 사용
+		
+		Statement : 인터페이스, SQL의 DDL/DML을 실행할 때 사용, 주로 정적SQL(변경없는 SQL)문 실행할 때 사용
+		
+		PreparedStatement : 인터페이스, SQL의 DDL/DML을 실행할 때 사용, Statement와 비슷, 매개변수화된 SQL문 사용가능하여 편리/보완성 좋음, Statement를 대신하여 자주사용
+		
+		CallableStatement : 인터페이스, DB에 저장되어있는 프로시저/함수를 호출할 때 사용
+		
+		ResultSet : DB에서 가져온 데이터 읽을 때 사용
+	
+	
+			<SQL 언어>
+			# DDL : Data Definition Language, 데이터 정의어
+				- CREATE, ALTER, DROP, RENAME, TRUNCATE
+				
+			# DML : Data Manipulation Language, 데이터 조작어
+				- SELECT, INSERT/UPDATE/DELETE
+				
+			# DCL : Data Control Language, 데이터 제어어
+				- GRANT, REVOKE
+				
+			# TCL : Transaction Control Language, 트랜잭션 제어어
+				- COMMIT, ROLLBACK, SAVEPOINT
+	
+	
+	----------------------------------------------------------------------
+
+	2. DBMS 설치 (교재에서는 가장 많이쓰는 Oracle DB 사용)
+	
+		# Oracle DBMS는 상용 소포트웨어이므로 교육할 때만 무료
+	
+		- 19.3 버전 다운로드
+		- c://Oracle에 압축풀기
+		- db 비밀번호 설정 (: oracle)
+		- 설치완료
+		
+		- cmd에서 비밀번호 180일 만료기간 해제하기
+			- sqlplus / as sysdba
+			- alter profile defualt limit password_life_time unlimited;
+		
+		- java에서 DB 접근 계정 생성하고 권한부여하기
+			- create user java identified by oracle; (비밀번호 oracle)
+			- grant connect to java;
+			- grant resource to java;
+			- grant unlimited tablespace to java;
+			
+		- 외부에서 포트번호로 서버에 연결할 수 있게 설정하기
+			- 원격연결
+				- 오라클 폴더의 Net Configuration Assistant 실행
+				- 리스너 구성 선택
+				- 재구성
+				- LISTENER 다음 누르고 정지하고 수정 (예)
+				- 그대로 놔두고 다음
+				- 표준포트번호 1521 사용 (다른 포트번호 사용해도 됨)
+				- 다른 리스너 구성 (아니오)
+				- 완료
+			- 방화벽해제
+				- 1521 포트 접근에 대한 방화벽 해제 해줘야 함
+				- 윈도우 검색에 '방화벽 및 네트워크 보호' 검색 후 실행
+				- 인바운드 규칙 - 새규칙
+				- 포트 선택
+				- TCP - 특정 로컬 포트 '1521' 입력 후 다음
+				- 연결 허용 선택
+				- 도메인/개인/공용 모두 선택
+				- 이름 : Oracle 완료
+				
+	--------------------------------------------------------
+	
+	3. Client Tool 설치
+		
+		- SQL Developer
+			- 무료 클라이언트 툴 (오라클 DB 개발 및 관리 기능 제공)
+			- UI 기반 (SQL Plus는 명령어 기반임)
+				- DB 모델링, DB 상태확인, SQL 스크립트, SQL/PL 개발을 수월하게 할 수 있음
+		
+		
+		- 오라클 SQL Developer jdk11 포함 버전 설치
+		- C://Oracle 디렉토리에 압축을 푼 sqldeveloper폴더 옮기기
+		- 실행 후 이전 SQL Developer 환경설정 임포트 (아니오)
+		- + 버튼 누른 후
+			- Name : 접속환경 이름
+			- 사용자이름 : java
+			- 비밀번호 : oracle
+			- 호스트이름 : localhost
+			- 포트 : 1521
+			- SID : orcl
+		- 테스트 후 성공하면 접속
+		
+			# 다른 컴퓨터의 db서버에 접근할 경우
+				- + 버튼 누른 후
+					- Name : 접속환경 이름 (예. 팀장 DB)
+					- 사용자이름 : 팀장 컴퓨터에서 db접근 허용한 이름
+					- 비밀번호 : 팀장 컴퓨터에서 db접근 허용한 이름의 암호
+					- 호스트이름 : 팀장 컴퓨터 IP
+					- 포트 : 팀장 컴퓨터의 DB서버 포트
+					- SID : orcl
+	
+	
+--------------------------------------------------------
+	
+	4. DB 구성
+	
+		- 테이블, 시퀀스, 프로시저, 함수를 생성하여 DB 구성하기
+		- DB Developer 워크시트에 sql문으로 스크립트 작성하여 전체 드래그 후 실행하기
+		
+--------------------------------------------------------
+
+	5. DB 연결
+	
+		- DB 및 DB 테이블 접근 순서
+		
+			<클라이언트 프로그램>
+			자바코드 → JDBC Interface → JDBC Driver →
+	
+			<서버 프로그램>
+			→ IP → Port → Oracle (사용자 PW → DB이름 → DB table)
+				 → Port → MySQL (사용자 PW → DB이름 → DB table)
+	
+		- DB 연결에 필요한 정보
+			- DBMS 설치 컴퓨터의 IP주소
+			- DBMS가 허용하는 Port번호
+			- DB사용자 계정의 이름과 비밀번호 (GRANT 된 사용자)
+			- 사용할 DB이름
+	
+	
+		- DB 연결 준비
+			- 오라클 DBMS의 DB에 연결하기 위한 JDBC Driver 설치하기
+				- 오라클 DB 설치 시 해당 폴더 안에 WINDOWS.X64_193000_db_home/jdbc/lib/ojdbc8.jar JDBC Driver가 있음
+				- jar파일을 현재 개발중인 프로젝트 lib폴더 안에 넣고 이클립스에서 add build path 해줌
+					# 윈도우 CMD로 실행하려면 환경변수 CLASSPATH에 jar파일 경로를 넣어줘야 함
+		
+		
+		- DB 연결
+	
+	
+	
+	
+				
