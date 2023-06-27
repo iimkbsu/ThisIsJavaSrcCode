@@ -6,12 +6,12 @@
 	3. Client Tool 설치
 	4. DB 구성
 	5. DB 연결
-	6. 데이터 저장
-	7. 데이터 수정
-	8. 데이터 삭제
-	9. 데이터 읽기
-	10. 프로시저와 함수 호출
-	11. 트랜잭션 처리
+	6. 데이터 저장 (SQL)
+	7. 데이터 수정 (SQL)
+	8. 데이터 삭제 (SQL)
+	9. 데이터 읽기 (SQL)
+	10. 프로시저와 함수 호출 (SQL)
+	11. 트랜잭션 처리 (SQL)
 	12. 게시판 구현
 	
 	
@@ -22,7 +22,7 @@
 	1. JDBC 개요
 	
 		- Java에서 제공하는 Java DataBase Connectivity 라이브러리
-		- DBMS(DataBase Management System) 종류와 상관없이 동일하게 사용 가능한 JDBC 라이브러리(프레임워크)의 클래스와 인터페이스로 구성되어있음
+		- DBMS(DataBase Management System) 종류와 상관없이 동일하게 사용 가능한 JDBC 라이브러리(프레임워크)안에 클래스와 인터페이스로 구성되어있음
 		- java.sql 패키지
 		
 		
@@ -181,8 +181,80 @@
 		
 		
 		- DB 연결
+			- JDBC Driver를 메모리로 로딩하는 코드 (CNFE 예외처리 필요, 빌드패스한 레퍼런스 라이브러리 ojdbc8.jar에 들어있음)
+				- Class.forName("oracle.jdbc.OracleDriver");
+				
+				# Class.forName()은 메모리에 클래스를 올리면서 객체를 리턴함, 여기서는 리턴값은 받지 않음
+				# 이 과정에서 JDBC Driver 클래스의 static 블록이 실행되면서 DriverManager에 JDBC Driver객체를 등록하게 됨
+					# Static 블록은 메모리에 등록하면 자동으로 실행됨
 	
+			- getConnection() 메소드로 DB 연결하는 코드
+				- Connection conn = DriverManager.getConnection("연결 문자열", "사용자", "비밀번호");
 	
+					# 연결 문자열 (오라클 기준) : jdbc:oracle:thin:@localhost:1521/orcl
+					
+						# :thin:@Ip주소or도메인:Port번호/DB이름
+
+
+
+
+		□□□□ ConnectionExample  DB연결/DB연결끊기 □□□□
+		
+			import java.sql.Connection;
+			import java.sql.DriverManager;
+			import java.sql.SQLException;
+			
+			Connection conn = null;
+			try{
+				Class.forName("oracle.jdbc.OracleDriver");
+				conn = DriverManager.getConnection(
+					"jdbc:oracle:thin:@localhost:1521/orcl",
+					"java",
+					"oracle"
+					);
+					
+			}catch(ClassNotFoundException e){
+			
+			}catch(SQLException e1){
+				e.printStackTrace();
+			}finally {
+				try{
+					conn.close();
+				}catch(SQLException e){}
+			}
+			
+			
+			----------------------------
+			또는 
+			//Connection 클래스가 autocloseable 구현하므로 아래처럼 작성해도 됨
+			
+			try {
+				Class.forName("oracle.jdbc.OracleDriver");
+			
+				try(Connection conn = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521/orcl", "java", "oracle")){
+					System.out.println("DB 연결 성공");
+				
+			}catch(SQLException e) {
+				e.printStackTrace();
+			}
+			System.out.println("DB 연결 끊김");
+		}catch(ClassNotFoundException e) {
+			
+		}
+
+
+
+--------------------------------------------------------------------------
+
+	6. DB에 데이터 저장 (SQL)
 	
+		- JDBC를 이용하여 쿼리문 INSERT로 DB 테이블에 새로운 정보를 저장하기
+
+		□□□□ SQL Developer가 아닌 JDBC를 이용하여 테이블에 새로운 정보 저장하기 □□□□
+
+			INSERT INTO users (userid, username, userpassword, userage, useremail)
+			VALUES ('winter', '한겨울', '12345', 25, 'winter@naver.com')
+
+
 	
 				
