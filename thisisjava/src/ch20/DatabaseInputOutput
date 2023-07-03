@@ -38,9 +38,9 @@
 		
 		- DriverManger (클)
 			- Connection (인)
-				- Statement (인)
+				- Statement (인) (요즘은 보안 때문에 사용 잘 안 함)
 					- ResultSet (공통 인)
-				- PreparedStatement (인)
+				- PreparedStatement (인) (요걸 사용)
 					- ResultSet (공통 인)
 				- CallableStatement (인)
 					- ResultSet (공통 인)
@@ -198,7 +198,7 @@
 
 
 
-		□□□□ ConnectionExample  DB연결/DB연결끊기 □□□□
+		■■■■ ConnectionExample  DB연결/DB연결끊기 ■■■■
 		
 			import java.sql.Connection;
 			import java.sql.DriverManager;
@@ -224,8 +224,8 @@
 			}
 			
 			
-			----------------------------
-			또는 
+			------------ 또는 -------------
+		
 			//Connection 클래스가 autocloseable 구현하므로 아래처럼 작성해도 됨
 			
 			try {
@@ -248,13 +248,420 @@
 
 	6. DB에 데이터 저장 (SQL)
 	
-		- JDBC를 이용하여 쿼리문 INSERT로 DB 테이블에 새로운 정보를 저장하기
-
-		□□□□ SQL Developer가 아닌 JDBC를 이용하여 테이블에 새로운 정보 저장하기 □□□□
-
+		- INSERT INTO 테이블 (항목) VALUES ('항목에 따른 값')
+	
+	
+		■■■■ SQL Developer 이용하여 users 테이블에 새로운 정보 저장하기 ■■■■
+		
 			INSERT INTO users (userid, username, userpassword, userage, useremail)
 			VALUES ('winter', '한겨울', '12345', 25, 'winter@naver.com')
-
-
+			COMMIT; // 커밋을 해줘야 DB에 영구저장됨
 	
+	
+		------------------------- 또는 --------------------------------
+	
+	
+		■■■■ SQL Developer가 아닌 JAVA에서 JDBC를 이용하여 users 테이블에 새로운 정보 저장하기 ■■■■
+
+		
+		■■■■ 값을 ?로 대체한 매개변수화된 INSERT 문으로 변경, INSERT문을 String 타입 변수 sql에 문자열로 대입하기 ■■■■
+		
+			String sql = new StringBuilder()
+							.append("INSERT INTO users (userid, username, userpassword, userage, useremail) ")
+							.append("VALUES (?, ?, ?, ?, ?)")
+							.toString();
+							
+			또는
+			
+			String sql = "" +
+						"INSERT INTO users (userid, username, userpassword, userage, useremail) " +
+						"VALUES (?, ?, ?, ?, ?)";
+			
+			
+			
+		■■■■ PreparedStatement 인터페이스 구현 객체로 매개변수화된 SQL문 실행하고 순서에따라 값 지정하기 ■■■■
+		
+			PreparedStatement pstmt = conn.prepareStatement(sql);
+			
+			pstmt.setString(1, "winter");
+			pstmt.setString(2, "한겨울");
+			pstmt.setString(3, "12345");
+			pstmt.setInt(4, 25);
+			pstmt.setString(5, "winter@naver.com");
+
+
+		
+		■■■■ executeUpdate() 메소드로 테이블에 행 저장하기 ■■■■
+		
+			int rows = pstmt.executeUpdate(); // 정상 저장되면 저장된 행의 개수 리턴
+			
+		
+		■■■■ PreparedStatement 종료 ■■■■
+		
+			pstmt.close();
+	
+
+
+
+
+		■■■■ boards 테이블에 게시물 정보 저장하기 ■■■■
+		
+		■■■■ SQL Developer 이용하여 테이블에 새로운 정보 저장하기 ■■■■
+		
+			INSERT INTO boards (bno, btitle, bcontent, bwriter, bdate, bfilename, bfiledata)
+			VALUES (SEQ_BNO.NEXTVAL, '눈 오는 날', '함박눈이 내려요.', 'winter', SYSDATE, 'snow.jpg', binaryData)
+			COMMIT;
+			
+		
+		■■■■ SQL Developer 이용하지않고 java의 jdbc로 테이블에 새로운 정보 저장하기 ■■■■	
+		
+			Connection conn = null;
+			
+			try{
+				Class.forName("oracle.jdbc.OracleDriver");
 				
+				conn = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521/orcl", "java", "oracle");
+				
+				// 오라클에서 시퀀스를 사용하여 SEQ_BNO.NEXTVAL 정의 (순차적인 넘버링)
+				
+				String sql = "" + "INSERT INTO boards (bno, btitle, bcontent, bwriter, bdate, bfilename, bfiledata) "
+								+ "VALUES (SEQ_BNO.NEXTVAL, ?, ?, ?, SYSDATE, ?, ?)"
+								
+				PreparedStatement pstmt = conn.preparedStatement(sql, new String[] {"bno"});
+				
+				pstmt.setString(1, "눈 오는 날");
+				pstmt.setString(2, "함박눈이 내려요.");
+				pstmt.setString(3, "winter");
+				pstmt.setString(4, "snow.jpg");
+				pstmt.setBlob(5, new FileInputStream("src/ch20/oracle/sec06/snow.jpg");
+				
+				
+				int rows = pstmt.executeUpdate();
+				System.out.println("저장된 행 수 : " + rows);
+				
+				//bno 값 얻기
+				if(rows == 1) {
+					ResultSet rs = pstmt.getGeneratedKeys();
+					if(rs.next()) {
+						int bno = rs.getInt(1);
+						System.out.println("저장된 bno : " + bno);
+					}
+					rs.close();
+				}
+				
+				pstmt.close();
+			}catch(Exception e) {
+			
+			}finally {
+				if(conn != null) {
+					try{
+						conn.close();
+					}catch(SQLException e){
+					}
+				}
+			}
+
+
+
+--------------------------------------------------------------------------------
+
+	7. DB 데이터 수정 (SQL)
+	
+		- UPDATE 테이블 SET 수정내용 WHERE 조건
+
+		■■■■ 쿼리문으로 데이터 수정하기 ■■■■
+		
+			UPDATE boards SET btitle = '눈사람', bcontent = '눈으로 만든 사람', bfilename = 'snowman.jpg', bfiledata = binaryData
+			WHERE bno = 3 ;
+			COMMIT;
+
+
+
+		■■■■ java에서 JDBC 사용하여 매개변수화 ? 시킨 후 String 타입으로 저장하고 prepareStatement() 메소드로 ? 값 지정하기 ■■■■
+		
+			//
+			UPDATE boards SET btitle = ?, bcontent = ?, bfilename = ?, bfiledata = ?
+			WHERE bno = ?
+			//
+			
+			
+			Connection conn = null;	
+			Class.forName("oracle.jbdc.OracleDriver");
+			conn = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521/orcl", "java", "oracle");
+			
+			String sql = new StringBulder().append("UPDATE boards SET ")
+										.append("btitle=?, ")
+										.append("bcontent=?, ")
+										.append("bfilename=?, ")
+										.append("bfieldata=? ")
+										.append("WHERE bno=?")
+										.toString();
+									
+			
+			PrepareStatement pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, "눈사람");
+			pstmt.setString(2, "눈으로 만든 사람");
+			pstmt.setString(3, "snowman.jgp");
+			pstmt.setBlob(4, new FileInputStream("src/ch20/oracle/sec07/snowman.jpg"));
+			pstmt.setInt(5, 3);
+			
+			int rows = pstmt.executeUpdate();
+	
+	
+	
+	
+	-------------------------------------------------------------------------------
+	
+	8. DB에서 데이터 삭제
+	
+		- DELETE FROM 테이블명 WHERE 조건
+		
+		
+		■■■■ JDBC DELETE 쿼리문 + 매개변수 ? 사용하여 데이터 삭제하기 ■■■■
+		
+			Connection conn = null;
+			try{
+				Class.forName("oracle.jdbc.OracleDriver");
+				
+				conn = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521/orcl","java","oracle");
+				
+				String sql = "DELETE FROM boards WHERE bwriter = ?";
+				
+				PreparedStatement pstmt = conn.prepareStatement(sql);
+				pstmt.setString(1, "winter");
+				
+				int rows = pstmt.executeUpdate();
+				System.out.println("삭제된 행 수 : " + rows);
+				
+				pstmt.close();
+			}catch(Exception e){
+			
+			}finally {
+				if(conn != null){
+					conn.close();
+				}
+			}
+		
+	
+	-----------------------------------------------------------------------------------
+	
+		9. 데이터 읽기
+		
+			- SELECT 칼럼s FROM 테이블명 (WHERE 조건)
+			- ResultSet rs = pstmt.executeQuery()  //executeUpdate()가 아닌 executeQuery() 메소드를 호출하여 사용
+			
+			# ResultSet 구조
+				- SELECT userid, username, userage FROM users 한 경우
+				
+			------------------------------------------------------------------
+				행			userid, 1	|	username, 2		|	userage, 3
+			
+			beforFirst						NO DATA								최초커서위치, next() == true
+			first			spring		|	김봄이			|	25				rs.next() == true
+			...								...									rs.next() == true
+			last			winter		|	한겨울			|	28				rs.next() == false
+			afterLast						NO DATA								
+	
+	
+				- if(rs.next()) // while(rs.next()) 문으로 데이터 행을 가져올 수 있음
+			
+				- rs.close()로 ResultSet 메모리 해제
+	
+	
+	
+			# 데이터 행 읽기
+			
+				- 칼럽 이름으로 읽기
+				
+				String userId = rs.getString("userid");
+				String userName = rs.getString("username");
+				int userAge = rs.getInt("userage");
+					
+					
+					
+				- 칼럼 순번으로 읽기 ( # SELECT 문에 연산식/함수호출 포함되어있으면 컬럼 순번으로 읽어와야 함)
+				
+				// 순번은 1부터 실행
+				String userId = rs.getString(1);
+				String userName = rs.getString(2);
+				int userAge = rs.getInt(3);
+	
+	
+	
+
+
+
+
+---------------------------------------------------------------------------------------
+
+	10. 프로시저와 함수 호출
+
+		- 오라클 DB에 저장되는 PL/SQL 프로그램.
+		- 클라 프로그램에서 매개값과 함께 프로시저/함수를 호출하면 DB 내부에서 일련의 SQL문을 실행하고 실행결과를 클라로 보내줌.
+		
+		- 프로시저 : 어떤 작업의 프로세스를 절차적으로 기술한 것 (예. 상대계좌입력-내계좌금액확인-계좌출금-상대계좌입금)
+		- 함수 : 각 프로세스 기능을 수행하기 위한 기능 (예. 상대계좌입력 : 계좌입력기능 + 계좌존재확인기능 + 상대계좌연결기능 등)
+		- 차이점
+			프로시저 : 특정 작업 수행 + 리턴값 0~n개 + 서버(DB)단에서 기술 + 수식내에서 사용 불가(WHERE,SELECT 문 안에서 사용 불가) + 단독 문장구성 가능
+			함수 : 특정 계산 수행 + 리턴값 무조건 1개 + 화면(클라)단에서 기술 + 수식내에서만 사용가능(WHERE,SELECT 문 안에서만 사용) + 단독 문장구성 불가
+	
+
+		□□□□ 프로시저 호출 및 값 받기 □□□□
+		
+			String sql = "{ call 프로시저명(?, ?, ?) }";
+			CallableStatement cstmt = conn.prepareCall(sql);
+			cstmt.setString(1, "값"); // In 파라미터
+			cstmt.setString(2, "값"); // In 파라미터
+			cstmt.registerOutParameter(3, 리턴타입); // 세 번째 파라미터는 값을 Out(리턴)하는 프로시저임
+			
+			cstmt.execute();
+			
+			리턴타입 result3 = cstmt.get리턴타입(3);
+			
+			cstmt.close();
+			
+		
+		---------- 실제 프로시저 호출하고 값 받아오기 --------------
+		
+		# USER 테이블에서 사용하는 USER_CREATE 프로시저 내용
+		
+			create or replace PROCEDURE user_create (
+				a_userid		IN	users.userid%TYPE,
+				a_username		IN	users.username%TYPE,
+				a_userpassword	IN	users.userpassword%TYPE,
+				a_userage		IN	users.userage%TYPE,
+				a_useremail		IN	users.usermail%TYPE,
+				a_rows			OUT	PLS_INTEGER
+			)
+			
+			IS
+			BEGIN
+				INSERT INTO users (userid, username, userpassword, userage, useremail)
+				VALUES (a_userid, a_username, a_userpassword, a_userage, a_useremail);
+				a_rows : = SQL%ROWCOUNT;
+			END;
+		------------------------------------------
+
+
+		■■■■ user_create 프로시저를 참고하여 프로시저 호출문 작성하고 아웃값 받기 ■■■■
+		
+			String sql = "{ call user_create(?, ?, ?, ?, ?, ?)}";
+			CallableStatement cstmt = conn.prepareCall(sql);
+			
+			cstmt.setString(1, "summer");
+			cstmt.setString(2, "한여름");
+			cstmt.setString(3, "pw12345");
+			cstmt.setInt(4, 31);
+			cstmt.setString(5, "summer@yahoo.co.kr");
+			cstmt.registerOutPrameter(6, Types.INTEGER);
+			
+			cstmt.execute();
+			int rows = cstmt.getInt(6);
+			
+		
+
+		-----------------------------------------------------------------------------------------
+		
+		
+	
+		□□□□ 함수 호출 및 값 받기 □□□□
+			
+			String sql = "{ ? = call 함수명(?, ?, ?) }";
+			CallableStatement cstmt = conn.prepareCall(sql);
+			cstmt.registerOutParameter(1, 리턴타입); // 첫 번째 파라미터 ? 는 리턴값임을 지정
+			cstmt.setString(2, "값");
+			cstmt.setString(3, "값");
+			cstmt.setString(4, "값");
+
+			cstmt.execute();
+			
+			리턴타입 result = cstmt.get리턴타입(1);
+			
+			cstmt.close();
+
+
+		-------- 실제 함수 호출하고 값 받아오기 --------
+		
+		# USER 테이블에서 사용하는 USER_LOGIN 함수 내용
+		
+			CREATE OR REPLACE FUNCTION user_login (
+				a_userid		users.userid%TYPE,
+				a_userpassword	users.userpassword%TYPE
+			)
+			RETURN PLS_INTEGER
+			
+			IS
+				v_userpassword users.userpassword%TYPE;
+				v_result PLS_INTEGER;
+			BEGIN
+				SELECT userpassword INTO v_userpassword
+				FROM users
+				WHERE userid = a_userid;
+			
+				IF v_userpassword = a_userpassword THEN
+					RETURN 0;
+				ELSE
+					RETURN 1;
+				END IF;
+			EXCEPTION
+				WHEN NO_DATA_FOUND THEN
+					RETURN 2;
+			END;
+		----------------------------------
+		
+		
+		■■■■ user_login 함수 참고하여 함수 호출문 작성하고 값 리턴받기  ■■■■
+
+			String sql = "{? = call user_login(?, ?)}";
+			CallableStatement cstmt = conn.prepareCall(sql);
+			
+			cstmt.registerOutParameter(1, Types.INTEGER);
+			cstmt.setString(2, "winter");
+			cstmt.setString(3, "pw12345");
+			
+			cstmt.execute();
+			int result = cstmt.getInt(1);
+			
+			String message = switch(result) {
+				case 0 -> "로그인 성공";
+				case 1 -> "비밀번호 틀림";
+				default -> "아이디 없음";
+			};
+			System.out.println(message);
+			
+			
+		
+		# ORM
+			- Object Relational Mapping (객체 관계 매핑)
+			- DB 테이블에서 한 행을 데이터가 아닌 (DTO)객체로 가져와서 객체를 사용할 수 있게 하는 프로그램/라이브러리
+			- DB의 테이블과 객체지향언어의 모델 간 불일치를 해결해줌, 사용성 및 보안유지에 좋음
+
+
+------------------------------------------------------------------------------------------------------
+
+	11. 트랜잭션 처리
+	
+		- 트랜잭션 : 기능 처리의 최소 단위 ( 하나의 기능처리는 여러 소작업으로 구성)
+		
+		# 계좌이체 기능 (트랜잭션) = 출금 소작업 + 입금 소작업
+		
+		- 트랜잭션에 있는 모든 소작업이 성공해야 트랜잭션이 성공함 (소작업 모두 성공하거나 모두 실패해야 함)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+			
