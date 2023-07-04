@@ -643,14 +643,70 @@
 	
 		- 트랜잭션 : 기능 처리의 최소 단위 ( 하나의 기능처리는 여러 소작업으로 구성)
 		
-		# 계좌이체 기능 (트랜잭션) = 출금 소작업 + 입금 소작업
-		
 		- 트랜잭션에 있는 모든 소작업이 성공해야 트랜잭션이 성공함 (소작업 모두 성공하거나 모두 실패해야 함)
+			# 출금 소작업(성공) + 입금 소작업(성공) = 계좌이체 기능 (트랜잭션) (성공)
+			
+			# 출금 작업
+			UPDATE accounts SET balance = balance - 100,000 WHERE ano = 112-131-144
+			
+			# 입금 작업
+			UPDATE accounts SET balance = balance + 100,000 WHERE ano = 302-111-515
+			
+		
+		- 트랜잭션 처리를 위해 COMMIT/ROLLBACK 제공함
+		
+		- JDBC에서 INSERT/UPDATE/DELETE 문을 실행하면 자동 COMMIT 되기 떄문에 입금없이 출금만 자동 COMMIT되는 문제 발생하므로 자동 COMMIT 꺼야 함
+			# conn.setAutoCommit(false); //자동COMMIT 끄기
+			# conn.commit(); //수동 COMMIT 처리하기
+			# conn.rollback(); // 수동 ROLLBACK 처리하기
+
+
+
+		□□□□ 수동 commit/rollback 사용방법 □□□□
+		
+			Connection conn = null
+			
+			try {
+				conn.setAutoCommit(false);
+				//여러 소작업 처리
+				//모두 성공처리
+				conn.commit();
+				
+			}catch (Exception e) {
+				
+				try {
+					//모두 실패처리
+					conn.rollback();				
+				}catch(SQLException e){
+				}
+			}finally {
+				if(conn != null){
+					try{
+						conn.setAutoCommit(true);
+						
+						conn.close();
+					}catch(SQLException e){
+					}
+				}
+			}
 
 
 
 
 
+
+	# 커넥션 풀
+	
+		- 다수의 클라이언트 요청을 처리하는 서버에서 필수기능
+		- 여러 개의 Connection을 미리 생성시켜놓고, 요청이 들어오면 connect 해준 후 처리가 완료되면 반환 후 재사용
+		- 장점 : DB 연결 시간 줄이기, Connection 수 관리(메모리관리)
+
+
+-------------------------------------------------------------------------------
+
+	12. 게시판 구현
+	
+		- CRUD(Create + Read + Update + Delete) : 생성 읽기 수정 삭제
 
 
 
