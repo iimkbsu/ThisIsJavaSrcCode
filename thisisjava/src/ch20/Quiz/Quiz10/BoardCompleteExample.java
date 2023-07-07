@@ -17,6 +17,7 @@ public class BoardCompleteExample {
 	private Connection conn = null;
 	
 	private String loginId;
+
 	
 	public BoardCompleteExample() {
 		try {
